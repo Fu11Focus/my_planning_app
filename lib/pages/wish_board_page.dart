@@ -13,17 +13,22 @@ class WishBoardPage extends StatelessWidget {
       endDrawer: RightMenu(thisPage: 'Whish Board'),
       drawerScrimColor: Colors.transparent,
       appBar: AppBar(
+        leading: Container(
+            margin: EdgeInsets.only(left: 20, top: 15),
+            child: Text(
+              'Wish Board 🔆',
+              style: TextStyle(
+                fontSize: 24,
+                color: Color(0xff2fb9c9),
+              ),
+            )),
+        leadingWidth: 200,
+        automaticallyImplyLeading: false,
         iconTheme: IconThemeData(
           color: const Color(0xff2fb9c9), //change color on your need
         ),
         backgroundColor: Color(0xff292d32),
         elevation: 0,
-        title: const Text(
-          'Wish Board',
-          style: TextStyle(
-            color: Color(0xffccd0cf),
-          ),
-        ),
       ),
       body: const Center(
           child: Text('Wish Board Page',
@@ -34,5 +39,3 @@ class WishBoardPage extends StatelessWidget {
     );
   }
 }
-
-void action() {}
