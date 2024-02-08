@@ -7,6 +7,7 @@ import 'package:flutter_tests/pages/projects_page.dart';
 import 'package:flutter_tests/pages/settings_page.dart';
 import 'package:flutter_tests/pages/statistics_page.dart';
 import 'package:flutter_tests/pages/today_page.dart';
+import 'package:flutter_tests/util/main_theme.dart';
 import 'pages/wish_board_page.dart';
 
 void main() {
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: mainTheme(),
       debugShowCheckedModeBanner: false,
       home: const WishBoardPage(),
       routes: {

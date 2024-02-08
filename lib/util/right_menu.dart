@@ -30,7 +30,7 @@ class RightMenu extends StatelessWidget {
 
     return Container(
       width: 300,
-      margin: const EdgeInsets.symmetric(vertical: 150.0),
+      margin: const EdgeInsets.symmetric(vertical: 50.0),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),

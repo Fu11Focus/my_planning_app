@@ -12,7 +12,7 @@ class Notes extends StatelessWidget {
       drawerScrimColor: Colors.transparent,
       appBar: AppBar(
         leading: Container(
-            margin: const EdgeInsets.only(left: 20, top: 15),
+            margin: const EdgeInsets.only(left: 20),
             child: Row(
               children: [
                 const Icon(
