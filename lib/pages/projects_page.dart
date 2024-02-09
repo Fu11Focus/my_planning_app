@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tests/util/my_appbar.dart';
 import 'package:flutter_tests/util/right_menu.dart';
 
 class Projects extends StatelessWidget {
@@ -6,30 +7,12 @@ class Projects extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xff292d32),
-      endDrawer: const RightMenu(thisPage: 'Projects'),
-      drawerScrimColor: Colors.transparent,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(
-          color: Color(0xff2fb9c9), //change color on your need
-        ),
-        backgroundColor: const Color(0xff292d32),
-        elevation: 0,
-        title: const Text(
-          'Projects',
-          style: TextStyle(
-            color: Color(0xffccd0cf),
-          ),
-        ),
-      ),
-      body: const Center(
-          child: Text('Strashno sho tut bude.',
-              style: TextStyle(
-                fontSize: 40,
-                color: Color(0xffccd0cf),
-              ))),
+    return const Scaffold(
+      endDrawer: RightMenu(thisPage: 'Projects'),
+      appBar: MyAppBar(icon: Icons.style_outlined, text: 'Projects'),
+      body: Center(
+          child: Text(
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.')),
     );
   }
 }

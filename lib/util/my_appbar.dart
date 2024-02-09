@@ -29,7 +29,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           )),
       automaticallyImplyLeading: false,
-      leadingWidth: 200,
+      leadingWidth: 300,
     );
   }
 
