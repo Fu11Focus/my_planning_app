@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tests/util/color_palette.dart';
 
 class RightMenu extends StatelessWidget {
   final String thisPage;
@@ -13,18 +14,14 @@ class RightMenu extends StatelessWidget {
         },
         leading: Icon(
           icon,
-          color: thisPage == title
-              ? const Color(0xff2fb9c9)
-              : const Color(0xffccd0cf),
+          color: thisPage == title ? brand : txt,
         ),
         title: Text(
           title,
           style: TextStyle(
             letterSpacing: 1.5,
             fontSize: 16,
-            color: thisPage == title
-                ? const Color(0xff2fb9c9)
-                : const Color(0xffccd0cf),
+            color: thisPage == title ? brand : txt,
           ),
         ),
       );
@@ -40,17 +37,17 @@ class RightMenu extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0xff30343a),
+            color: shadowLight,
             blurRadius: 18,
             offset: Offset(-18, -18),
           ),
           BoxShadow(
-            color: Color.fromARGB(255, 33, 35, 39),
+            color: shadowDark,
             blurRadius: 18,
             offset: Offset(18, 18),
           ),
         ],
-        color: Color(0xff292d32),
+        color: bg,
       ),
       child: ListView(
         children: <Widget>[

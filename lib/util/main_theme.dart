@@ -8,7 +8,10 @@ ThemeData mainTheme() => ThemeData(
     ),
     appBarTheme: const AppBarTheme(
       elevation: 0,
-      toolbarTextStyle: TextStyle(fontSize: 24, color: brand),
+      toolbarTextStyle: TextStyle(
+        fontSize: 24,
+        color: brand,
+      ),
       iconTheme: IconThemeData(size: 24, color: brand),
       color: bg,
       foregroundColor: brand,
@@ -21,13 +24,11 @@ ThemeData mainTheme() => ThemeData(
         borderSide: BorderSide.none,
       ),
       outlineBorder: BorderSide.none,
-      counterStyle: TextStyle(
-        color: txt,
-      ),
       hintStyle: TextStyle(
         color: hintTxt,
+        letterSpacing: 1.5,
       ),
-      contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
     ),
     textSelectionTheme:
         const TextSelectionThemeData(selectionColor: brand, cursorColor: brand),

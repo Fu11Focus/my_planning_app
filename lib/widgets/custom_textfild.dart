@@ -16,6 +16,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // height: ,
       margin: EdgeInsets.only(
           top: marginTop,
           right: marginRight,
@@ -28,12 +29,14 @@ class CustomTextField extends StatelessWidget {
           BoxShadow(
             color: bg,
             spreadRadius: -5,
-            blurRadius: 5,
+            blurRadius: 10,
           ),
         ],
       ),
       child: TextField(
-        style: const TextStyle(color: txt),
+        style: const TextStyle(
+          color: txt,
+        ),
         decoration: InputDecoration(
           hintText: hintText,
         ),

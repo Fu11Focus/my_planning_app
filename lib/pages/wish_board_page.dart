@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tests/util/my_appbar.dart';
-import 'package:flutter_tests/util/right_menu.dart';
+import 'package:flutter_tests/widgets/my_appbar.dart';
+import 'package:flutter_tests/widgets/right_menu.dart';
 
 class WishBoardPage extends StatelessWidget {
   const WishBoardPage({super.key});
