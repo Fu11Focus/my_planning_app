@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tests/pages/calendar_page.dart';
+import 'package:flutter_tests/pages/creates_note_page.dart';
 import 'package:flutter_tests/pages/habbits_tracker_page.dart';
 import 'package:flutter_tests/pages/inbox_page.dart';
 import 'package:flutter_tests/pages/notes_page.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/projects': (context) => const Projects(),
         '/statistics': (context) => const Statistics(),
         '/settings': (context) => const Settings(),
+        '/createNote': (context) => const CreateNotePage(),
       },
     );
   }

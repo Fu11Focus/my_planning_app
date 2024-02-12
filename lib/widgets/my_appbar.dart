@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tests/my_icons_icons.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String text;
@@ -15,6 +16,16 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      actions: [
+        Builder(
+          builder: (context) => IconButton(
+            padding: const EdgeInsets.only(right: 20),
+            icon: const Icon(MyIcons.sandwich, size: 14),
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+          ),
+        ),
+      ],
       leading: Container(
           margin: const EdgeInsets.only(left: 20),
           child: Row(

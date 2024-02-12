@@ -46,7 +46,9 @@ class NoteCard extends StatelessWidget {
                   color: txt, fontWeight: FontWeight.bold, letterSpacing: 1.5),
             ),
             Text(
-              text,
+              (text.length < 90)
+                  ? text
+                  : '${text.substring(0, text.length - (text.length - 90))}...',
               style: const TextStyle(color: txt, letterSpacing: 1.5),
             ),
             Row(

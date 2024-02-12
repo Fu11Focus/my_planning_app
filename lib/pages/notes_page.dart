@@ -43,7 +43,8 @@ class Notes extends StatelessWidget {
               children: [
                 NoteCard(
                   title: 'Note`s title',
-                  text: 'Something descriptions.',
+                  text:
+                      'Something descriptions. Один два три четыре пять шесть семь восемь девять десять одинадцать двенадцать тринадцать',
                   date: '21 Oct 2023',
                   tag: 'hobby',
                 ),
@@ -90,7 +91,9 @@ class Notes extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
         ),
         child: Icon(Icons.add_outlined),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, '/createNote');
+        },
       ),
     );
   }

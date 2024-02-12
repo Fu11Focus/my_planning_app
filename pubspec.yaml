@@ -65,3 +65,6 @@ flutter:
         - asset: assets/fonts/Campton-Light.ttf
         - asset: assets/fonts/Campton-Bold.ttf
           weight: 700
+    - family:  MyIcons
+      fonts:
+         - asset: assets/icons/MyIcons.ttf

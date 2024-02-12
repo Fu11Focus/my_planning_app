@@ -16,7 +16,7 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: ,
+      height: 50,
       margin: EdgeInsets.only(
           top: marginTop,
           right: marginRight,
