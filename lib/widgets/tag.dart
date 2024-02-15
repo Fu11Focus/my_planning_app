@@ -21,7 +21,7 @@ class Tag extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(color: txt),
+            style: const TextStyle(color: txt, letterSpacing: 1.5),
           ),
         ));
   }

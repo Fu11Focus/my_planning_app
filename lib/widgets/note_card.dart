@@ -3,7 +3,6 @@ import 'package:flutter_tests/util/color_palette.dart';
 
 class NoteCard extends StatelessWidget {
   final String title, text, date, tag;
-
   const NoteCard({
     super.key,
     required this.title,
@@ -14,6 +13,13 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var customText = text;
+    if (text.contains('\n')) {
+      customText = '${text.substring(0, text.indexOf('\n'))}...';
+    } else if (text.length > 90) {
+      customText =
+          '${text.substring(0, (text.length - (text.length - 90)))}...';
+    }
     return Container(
       height: 135,
       padding: const EdgeInsets.all(20),
@@ -46,9 +52,7 @@ class NoteCard extends StatelessWidget {
                   color: txt, fontWeight: FontWeight.bold, letterSpacing: 1.5),
             ),
             Text(
-              (text.length < 90)
-                  ? text
-                  : '${text.substring(0, text.length - (text.length - 90))}...',
+              customText,
               style: const TextStyle(color: txt, letterSpacing: 1.5),
             ),
             Row(

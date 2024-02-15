@@ -1,18 +1,24 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
+import 'package:flutter_tests/data/all_notes.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 import 'package:flutter_tests/widgets/custom_textfild.dart';
 import 'package:flutter_tests/widgets/my_appbar.dart';
 import 'package:flutter_tests/widgets/note_card.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
 import 'package:flutter_tests/widgets/tag.dart';
+import 'package:provider/provider.dart';
 
-class Notes extends StatelessWidget {
+class Notes extends StatefulWidget {
   const Notes({super.key});
 
   @override
+  State<Notes> createState() => _NotesState();
+}
+
+class _NotesState extends State<Notes> {
+  @override
   Widget build(BuildContext context) {
+    var allNotes = Provider.of<AllNotes>(context).allNotes;
     return Scaffold(
       endDrawer: const RightMenu(thisPage: 'Notes'),
       appBar: const MyAppBar(icon: Icons.mode_edit_outlined, text: 'Notes'),
@@ -25,62 +31,26 @@ class Notes extends StatelessWidget {
               marginLeft: 20),
           //строка с тегами
           Container(
-              margin: EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: 10),
               height: 50,
-              child: ListView(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                scrollDirection: Axis.horizontal,
-                children: [
-                  Tag(text: 'Exemple'),
-                  Tag(text: 'Exemple'),
-                  Tag(text: 'Exemple'),
-                  Tag(text: 'Exemple'),
-                  Tag(text: 'Exemple'),
-                ],
-              )),
+              child: ListView.builder(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: allNotes.length,
+                  itemBuilder: (context, index) {
+                    return Tag(text: allNotes[index]['tag']);
+                  })),
           Expanded(
-            child: ListView(
-              children: [
-                NoteCard(
-                  title: 'Note`s title',
-                  text:
-                      'Something descriptions. Один два три четыре пять шесть семь восемь девять десять одинадцать двенадцать тринадцать',
-                  date: '21 Oct 2023',
-                  tag: 'hobby',
-                ),
-                NoteCard(
-                  title: 'Note`s title',
-                  text: 'Something descriptions.',
-                  date: '21 Oct 2023',
-                  tag: 'hobby',
-                ),
-                NoteCard(
-                  title: 'Note`s title',
-                  text: 'Something descriptions.',
-                  date: '21 Oct 2023',
-                  tag: 'hobby',
-                ),
-                NoteCard(
-                  title: 'Note`s title',
-                  text: 'Something descriptions.',
-                  date: '21 Oct 2023',
-                  tag: 'hobby',
-                ),
-                NoteCard(
-                  title: 'Note`s title',
-                  text: 'Something descriptions.',
-                  date: '21 Oct 2023',
-                  tag: 'hobby',
-                ),
-                NoteCard(
-                  title: 'Note`s title',
-                  text: 'Something descriptions.',
-                  date: '21 Oct 2023',
-                  tag: 'hobby',
-                ),
-              ],
-            ),
-          )
+              child: ListView.builder(
+                  itemCount: allNotes.length,
+                  itemBuilder: (context, index) {
+                    return NoteCard(
+                        title: allNotes[index]['title'],
+                        text: allNotes[index]['desc'],
+                        date: allNotes[index]['date'],
+                        tag: allNotes[index]['tag']);
+                  }))
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -90,7 +60,7 @@ class Notes extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        child: Icon(Icons.add_outlined),
+        child: const Icon(Icons.add_outlined),
         onPressed: () {
           Navigator.pushNamed(context, '/createNote');
         },
