@@ -23,7 +23,7 @@ class NoteCard extends StatelessWidget {
     return Container(
       height: 135,
       padding: const EdgeInsets.all(20),
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      // margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       decoration: BoxDecoration(
           color: bg,
           border: Border.all(

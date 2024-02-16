@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tests/data/all_notes.dart';
+import 'package:flutter_tests/my_icons_icons.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 import 'package:flutter_tests/widgets/custom_textfild.dart';
 import 'package:flutter_tests/widgets/my_appbar.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_tests/widgets/note_card.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
 import 'package:flutter_tests/widgets/tag.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class Notes extends StatefulWidget {
   const Notes({super.key});
@@ -45,11 +47,31 @@ class _NotesState extends State<Notes> {
               child: ListView.builder(
                   itemCount: allNotes.length,
                   itemBuilder: (context, index) {
-                    return NoteCard(
-                        title: allNotes[index]['title'],
-                        text: allNotes[index]['desc'],
-                        date: allNotes[index]['date'],
-                        tag: allNotes[index]['tag']);
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      child: Slidable(
+                        endActionPane: ActionPane(
+                            motion: const StretchMotion(),
+                            children: [
+                              SlidableAction(
+                                autoClose: true,
+                                onPressed: (context) => {
+                                  setState(
+                                    () => allNotes.removeAt(index),
+                                  )
+                                },
+                                icon: MyIcons.trash,
+                                backgroundColor: bg,
+                              )
+                            ]),
+                        child: NoteCard(
+                            title: allNotes[index]['title'],
+                            text: allNotes[index]['desc'],
+                            date: allNotes[index]['date'],
+                            tag: allNotes[index]['tag']),
+                      ),
+                    );
                   }))
         ],
       ),
