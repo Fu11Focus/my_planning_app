@@ -21,71 +21,64 @@ class _NotesState extends State<Notes> {
   @override
   Widget build(BuildContext context) {
     var allNotes = Provider.of<AllNotes>(context).allNotes;
-    return Scaffold(
-      endDrawer: const RightMenu(thisPage: 'Notes'),
-      appBar: const MyAppBar(icon: Icons.mode_edit_outlined, text: 'Notes'),
-      body: Column(
-        children: [
-          const CustomTextField(
-              hintText: 'Search anything...',
-              marginTop: 10,
-              marginRight: 20,
-              marginLeft: 20),
-          //строка с тегами
-          Container(
-              margin: const EdgeInsets.only(top: 10),
-              height: 50,
-              child: ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: allNotes.length,
-                  itemBuilder: (context, index) {
-                    return Tag(text: allNotes[index]['tag']);
-                  })),
-          Expanded(
-              child: ListView.builder(
-                  itemCount: allNotes.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: Slidable(
-                        endActionPane: ActionPane(
-                            motion: const StretchMotion(),
-                            children: [
-                              SlidableAction(
-                                autoClose: true,
-                                onPressed: (context) => {
-                                  setState(
-                                    () => allNotes.removeAt(index),
-                                  )
-                                },
-                                icon: MyIcons.trash,
-                                backgroundColor: bg,
-                              )
-                            ]),
-                        child: NoteCard(
-                            title: allNotes[index]['title'],
-                            text: allNotes[index]['desc'],
-                            date: allNotes[index]['date'],
-                            tag: allNotes[index]['tag']),
-                      ),
-                    );
-                  }))
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: shadowDark,
-        foregroundColor: brand,
-        splashColor: shadowDark,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        endDrawer: const RightMenu(thisPage: 'Notes'),
+        appBar: const MyAppBar(icon: Icons.mode_edit_outlined, text: 'Notes'),
+        body: Column(
+          children: [
+            const CustomTextField(hintText: 'Search anything...', marginTop: 10, marginRight: 20, marginLeft: 20),
+            //строка с тегами
+            Container(
+                margin: const EdgeInsets.only(top: 10),
+                height: 50,
+                child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: allNotes.length,
+                    itemBuilder: (context, index) {
+                      return Tag(text: allNotes[index]['tag']);
+                    })),
+            Expanded(
+                child: ListView.builder(
+                    itemCount: allNotes.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: Slidable(
+                          endActionPane: ActionPane(motion: const StretchMotion(), children: [
+                            SlidableAction(
+                              autoClose: true,
+                              onPressed: (context) => {
+                                setState(
+                                  () => allNotes.removeAt(index),
+                                )
+                              },
+                              icon: MyIcons.trash,
+                              backgroundColor: bg,
+                            )
+                          ]),
+                          child: GestureDetector(onTap: () => Navigator.pushNamed(context, '/createNote', arguments: {'index': index}), child: NoteCard(title: allNotes[index]['title'], desc: allNotes[index]['desc'], date: allNotes[index]['date'], tag: allNotes[index]['tag'])),
+                        ),
+                      );
+                    }))
+          ],
         ),
-        child: const Icon(Icons.add_outlined),
-        onPressed: () {
-          Navigator.pushNamed(context, '/createNote');
-        },
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: shadowDark,
+          foregroundColor: brand,
+          splashColor: shadowDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: const Icon(Icons.add_outlined),
+          onPressed: () {
+            Navigator.pushNamed(context, '/createNote');
+          },
+        ),
       ),
     );
   }

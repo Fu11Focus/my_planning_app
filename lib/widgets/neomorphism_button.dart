@@ -33,28 +33,29 @@ class _NeomorphismButtonState extends State<NeomorphismButton> {
           _offset = 5;
         });
       },
+      onTapCancel: () {
+        setState(() {
+          _offset = 5;
+        });
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 50),
         width: widget.width,
         height: widget.height,
         padding: const EdgeInsets.all(0),
         margin: const EdgeInsets.all(0),
-        decoration: BoxDecoration(
-            color: bg,
-            border: Border.all(color: shadowLight, width: 1),
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: shadowDark,
-                blurRadius: 5,
-                offset: Offset(_offset, _offset),
-              ),
-              BoxShadow(
-                color: shadowLight,
-                blurRadius: 5,
-                offset: Offset(-_offset, -_offset),
-              )
-            ]),
+        decoration: BoxDecoration(color: bg, border: Border.all(color: shadowLight, width: 1), borderRadius: BorderRadius.circular(10), boxShadow: [
+          BoxShadow(
+            color: shadowDark,
+            blurRadius: 5,
+            offset: Offset(_offset, _offset),
+          ),
+          BoxShadow(
+            color: shadowLight,
+            blurRadius: 5,
+            offset: Offset(-_offset, -_offset),
+          )
+        ]),
         child: Center(
           child: widget.child,
         ),
