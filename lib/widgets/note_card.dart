@@ -3,6 +3,7 @@ import 'package:flutter_tests/util/color_palette.dart';
 
 class NoteCard extends StatelessWidget {
   final String title, desc, date, tag;
+  final bool pined;
   final int? index;
   const NoteCard({
     super.key,
@@ -11,6 +12,7 @@ class NoteCard extends StatelessWidget {
     required this.desc,
     required this.date,
     required this.tag,
+    required this.pined,
   });
 
   @override
@@ -22,10 +24,9 @@ class NoteCard extends StatelessWidget {
       customText = '${desc.substring(0, (desc.length - (desc.length - 90)))}...';
     }
     return GestureDetector(
-      // onTap: () => Navigator.pushNamed(context, '/createNote', arguments: {'index': index}),
       child: Container(
         height: 135,
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
             color: bg,
             border: Border.all(
@@ -45,9 +46,15 @@ class NoteCard extends StatelessWidget {
               )
             ]),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(
-            title,
-            style: const TextStyle(color: txt, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(color: txt, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+              ),
+              Icon(Icons.push_pin_outlined, color: pined ? hintTxt : bg),
+            ],
           ),
           Text(
             customText,

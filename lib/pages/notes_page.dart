@@ -18,9 +18,27 @@ class Notes extends StatefulWidget {
 }
 
 class _NotesState extends State<Notes> {
+  List viewNotes = [];
+  @override
+  void didChangeDependencies() {
+    viewNotes = Provider.of<AllNotes>(context).allNotes;
+    super.didChangeDependencies();
+  }
+
+  void searchNote(String text) {
+    List filteredNotes = [];
+    Provider.of<AllNotes>(context, listen: false).allNotes.forEach((element) {
+      if (element['title'].toLowerCase().contains(text.toLowerCase()) || element['desc'].toLowerCase().contains(text.toLowerCase()) || element['tag'].toLowerCase().contains(text.toLowerCase())) {
+        filteredNotes.add(element);
+      }
+    });
+    setState(() {
+      viewNotes = filteredNotes;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var allNotes = Provider.of<AllNotes>(context).allNotes;
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -30,7 +48,7 @@ class _NotesState extends State<Notes> {
         appBar: const MyAppBar(icon: Icons.mode_edit_outlined, text: 'Notes'),
         body: Column(
           children: [
-            const CustomTextField(hintText: 'Search anything...', marginTop: 10, marginRight: 20, marginLeft: 20),
+            CustomTextField(hintText: 'Search anything...', marginTop: 10, marginRight: 20, marginLeft: 20, onChange: searchNote),
             //строка с тегами
             Container(
                 margin: const EdgeInsets.only(top: 10),
@@ -38,13 +56,13 @@ class _NotesState extends State<Notes> {
                 child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                     scrollDirection: Axis.horizontal,
-                    itemCount: allNotes.length,
+                    itemCount: viewNotes.length,
                     itemBuilder: (context, index) {
-                      return Tag(text: allNotes[index]['tag']);
+                      return Tag(text: viewNotes[index]['tag']);
                     })),
             Expanded(
                 child: ListView.builder(
-                    itemCount: allNotes.length,
+                    itemCount: viewNotes.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -54,14 +72,22 @@ class _NotesState extends State<Notes> {
                               autoClose: true,
                               onPressed: (context) => {
                                 setState(
-                                  () => allNotes.removeAt(index),
+                                  () => viewNotes.removeAt(index),
                                 )
                               },
                               icon: MyIcons.trash,
                               backgroundColor: bg,
                             )
                           ]),
-                          child: GestureDetector(onTap: () => Navigator.pushNamed(context, '/createNote', arguments: {'index': index}), child: NoteCard(title: allNotes[index]['title'], desc: allNotes[index]['desc'], date: allNotes[index]['date'], tag: allNotes[index]['tag'])),
+                          child: GestureDetector(
+                              onTap: () => Navigator.pushNamed(context, '/createNote', arguments: {'index': index}),
+                              child: NoteCard(
+                                title: viewNotes[index]['title'],
+                                desc: viewNotes[index]['desc'],
+                                date: viewNotes[index]['date'],
+                                tag: viewNotes[index]['tag'],
+                                pined: viewNotes[index]['pined'],
+                              )),
                         ),
                       );
                     }))

@@ -72,12 +72,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
   void onSave() {
     if (_title.text.isNotEmpty && _tag.text.isNotEmpty) {
       setState(() {
-        note = {
-          'title': _title.text,
-          'tag': _tag.text,
-          'desc': _desc.text,
-          'date': date,
-        };
+        note = {'title': _title.text, 'tag': _tag.text, 'desc': _desc.text, 'date': date, 'pined': false};
       });
       if (indexNote != -1) {
         Provider.of<AllNotes>(context, listen: false).allNotes[indexNote] = note;
@@ -295,6 +290,24 @@ class _CreateNotePageState extends State<CreateNotePage> {
                     ),
                     Text(
                       'Save',
+                      style: TextStyle(color: brand, letterSpacing: 1.5),
+                    )
+                  ],
+                ),
+              ),
+              NeomorphismButton(
+                height: 60,
+                width: 60,
+                action: () => {},
+                child: const Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.push_pin_outlined,
+                      color: brand,
+                    ),
+                    Text(
+                      'Pin',
                       style: TextStyle(color: brand, letterSpacing: 1.5),
                     )
                   ],
