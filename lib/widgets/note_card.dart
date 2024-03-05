@@ -4,10 +4,8 @@ import 'package:flutter_tests/util/color_palette.dart';
 class NoteCard extends StatelessWidget {
   final String title, desc, date, tag;
   final bool pined;
-  final int? index;
   const NoteCard({
     super.key,
-    this.index,
     required this.title,
     required this.desc,
     required this.date,

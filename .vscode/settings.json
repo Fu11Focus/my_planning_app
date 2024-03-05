@@ -15,7 +15,7 @@
   "editor.hideCursorInOverviewRuler": true,
   "editor.emptySelectionClipboard": false,
   "editor.foldingHighlight": false,
-  "editor.glyphMargin": false,
+  "editor.glyphMargin": true,
   "workbench.editor.showTabs": false,
   "breadcrumbs.symbolPath": "on",
   "workbench.tree.renderIndentGuides": "none",

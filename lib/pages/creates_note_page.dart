@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_tests/data/all_notes.dart';
 import 'package:flutter_tests/my_icons_icons.dart';
@@ -23,33 +25,38 @@ class _CreateNotePageState extends State<CreateNotePage> {
   late TextEditingController _tag;
   late TextEditingController _desc;
   late bool firstBuild;
+  late int keyNote;
+  late bool pined;
   @override
   void initState() {
     super.initState();
+    indexNote = 0;
     firstBuild = true;
     _title = TextEditingController();
     _tag = TextEditingController();
     _desc = TextEditingController();
+    keyNote = Random().hashCode;
     titleNotEmpty = true;
     tagNotEmpty = true;
-    note = {
-      'title': '',
-      'tag': '',
-      'desc': '',
-      'date': date,
-    };
+    pined = false;
+    note = {'title': '', 'tag': '', 'desc': '', 'date': date, 'key': keyNote, 'pined': pined};
   }
 
   void _updateFields() {
     if (firstBuild) {
       Map? arguments = ModalRoute.of(context)?.settings.arguments as Map?;
       if (arguments != null) {
-        indexNote = arguments['index'];
-        note = Provider.of<AllNotes>(context).allNotes[indexNote];
+        Provider.of<AllNotes>(context).allNotes.forEach((element) {
+          if (element['key'] == arguments['key']) {
+            note = element;
+          }
+        });
         _title.text = note['title'];
         _tag.text = note['tag'];
         _desc.text = note['desc'];
         date = note['date'];
+        pined = note['pined'];
+        keyNote = note['key'];
       } else {
         indexNote = -1;
       }
@@ -59,7 +66,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
 
   void deleteNote(index) {
     if (index != -1) {
-      Provider.of<AllNotes>(context, listen: false).allNotes.removeAt(index);
+      Provider.of<AllNotes>(context, listen: false).allNotes.removeWhere((element) => element['key'] == keyNote);
     }
     _showDialog('Deleted.');
     //ожидание показа диалогового окна перед закрытием страницы редактирования
@@ -72,12 +79,19 @@ class _CreateNotePageState extends State<CreateNotePage> {
   void onSave() {
     if (_title.text.isNotEmpty && _tag.text.isNotEmpty) {
       setState(() {
-        note = {'title': _title.text, 'tag': _tag.text, 'desc': _desc.text, 'date': date, 'pined': false};
+        note = {'title': _title.text, 'tag': _tag.text, 'desc': _desc.text, 'date': date, 'key': keyNote, 'pined': pined};
       });
       if (indexNote != -1) {
-        Provider.of<AllNotes>(context, listen: false).allNotes[indexNote] = note;
+        var i = -1;
+        for (var element in Provider.of<AllNotes>(context, listen: false).allNotes) {
+          i = i + 1;
+          if (element['key'] == keyNote) {
+            break;
+          }
+        }
+        Provider.of<AllNotes>(context, listen: false).allNotes[i] = note;
       } else {
-        Provider.of<AllNotes>(context, listen: false).allNotes.add(note);
+        Provider.of<AllNotes>(context, listen: false).addNote(note);
       }
       _showDialog('Saved!');
     } else {
@@ -92,6 +106,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
     Future.delayed(
         const Duration(milliseconds: 1000),
         () => showDialog(
+              barrierDismissible: false,
               context: context,
               barrierColor: Colors.transparent,
               builder: (BuildContext context) {
@@ -168,6 +183,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
               ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: const BoxDecoration(
                   color: bg,
                   boxShadow: [
@@ -186,36 +202,35 @@ class _CreateNotePageState extends State<CreateNotePage> {
                 ),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: TextField(
-                        controller: _title,
-                        onChanged: (value) => setState(() {
-                          titleNotEmpty = value.isNotEmpty;
-                        }),
-                        style: const TextStyle(color: txt, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 1.5),
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.all(0),
-                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: titleNotEmpty ? bg : Colors.red, width: 1)),
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: titleNotEmpty ? bg : Colors.red, width: 1)),
-                          hintText: 'New note',
-                        ),
+                    TextField(
+                      controller: _title,
+                      onChanged: (value) => setState(() {
+                        titleNotEmpty = value.isNotEmpty;
+                      }),
+                      style: const TextStyle(color: txt, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.all(0),
+                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: titleNotEmpty ? bg : Colors.red, width: 1)),
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: titleNotEmpty ? bg : Colors.red, width: 1)),
+                        hintText: 'New note',
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             const Icon(
-                              MyIcons.tag_2,
+                              MyIcons.tag_1,
                               color: txt,
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * 0.5,
-                              height: 60,
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              height: 45,
                               child: TextField(
                                 controller: _tag,
                                 onChanged: (value) => setState(() {
@@ -234,12 +249,12 @@ class _CreateNotePageState extends State<CreateNotePage> {
                         ),
                         Row(
                           children: [
-                            const Padding(
-                              padding: EdgeInsets.only(right: 5.0),
-                              child: Icon(
-                                Icons.date_range_outlined,
-                                color: txt,
-                              ),
+                            Icon(
+                              Icons.date_range_outlined,
+                              color: txt,
+                            ),
+                            SizedBox(
+                              width: 10,
                             ),
                             Text(
                               note['date'],
@@ -298,7 +313,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
               NeomorphismButton(
                 height: 60,
                 width: 60,
-                action: () => {},
+                action: () => onPin,
                 child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -316,7 +331,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
               NeomorphismButton(
                 height: 60,
                 width: 60,
-                action: () => deleteNote(indexNote),
+                action: () => deleteNote(keyNote),
                 child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
