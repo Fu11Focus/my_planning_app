@@ -30,6 +30,14 @@ ThemeData mainTheme() => ThemeData(
       ),
       contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 20),
     ),
-    textSelectionTheme:
-        const TextSelectionThemeData(selectionColor: brand, cursorColor: brand),
+    checkboxTheme: CheckboxThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      fillColor: MaterialStateProperty.all(brand),
+      checkColor: MaterialStateProperty.all(shadowDark),
+      side: const BorderSide(style: BorderStyle.none),
+    ),
+    // listTileTheme: const ListTileThemeData(titleTextStyle: TextStyle(color: Colors.red)),
+    textSelectionTheme: const TextSelectionThemeData(selectionColor: brand, cursorColor: brand),
     textTheme: const TextTheme());

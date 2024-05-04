@@ -5,18 +5,22 @@ import 'package:flutter_tests/pages/creates_note_page.dart';
 import 'package:flutter_tests/pages/habbits_tracker_page.dart';
 import 'package:flutter_tests/pages/inbox_page.dart';
 import 'package:flutter_tests/pages/notes_page.dart';
+import 'package:flutter_tests/pages/project_create_page.dart';
 import 'package:flutter_tests/pages/projects_page.dart';
 import 'package:flutter_tests/pages/settings_page.dart';
 import 'package:flutter_tests/pages/statistics_page.dart';
 import 'package:flutter_tests/pages/today_page.dart';
 import 'package:flutter_tests/util/main_theme.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'pages/wish_board_page.dart';
 
-void main() {
-  runApp(MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => AllNotes())],
-      child: const MyApp()));
+void main() async {
+  await Hive.initFlutter();
+  await Hive.openBox('MyBox');
+  await Hive.openBox('WishBox');
+
+  runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (context) => AllNotes())], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -39,6 +43,7 @@ class MyApp extends StatelessWidget {
         '/statistics': (context) => const Statistics(),
         '/settings': (context) => const Settings(),
         '/createNote': (context) => const CreateNotePage(),
+        '/projectCreate': (context) => const ProjectCreate(),
       },
     );
   }

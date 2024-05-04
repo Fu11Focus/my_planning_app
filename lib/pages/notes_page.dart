@@ -7,7 +7,7 @@ import 'package:flutter_tests/widgets/my_appbar.dart';
 import 'package:flutter_tests/widgets/note_card.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
 import 'package:flutter_tests/widgets/tag.dart';
-import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
@@ -19,13 +19,21 @@ class Notes extends StatefulWidget {
 }
 
 class _NotesState extends State<Notes> {
+  final _myBox = Hive.box('MyBox');
+  AllNotes dbNotes = AllNotes();
+
   List viewNotes = [];
   List allTags = [];
   Set tags = {};
   @override
   void initState() {
     super.initState();
-    viewNotes = List.from(Provider.of<AllNotes>(context, listen: false).allNotes);
+    if (_myBox.get('ALLNOTES') == null) {
+      dbNotes.createInitialData();
+    } else {
+      dbNotes.loadData();
+    }
+    viewNotes = dbNotes.allNotes;
     for (var element in viewNotes) {
       allTags.add(element['tag']);
     }
@@ -36,13 +44,14 @@ class _NotesState extends State<Notes> {
 
   void searchNote(String text) {
     setState(() {
-      viewNotes = Provider.of<AllNotes>(context, listen: false).allNotes.where((note) => note['title'].toLowerCase().contains(text.toLowerCase()) || note['desc'].toLowerCase().contains(text.toLowerCase()) || note['tag'].toLowerCase().contains(text.toLowerCase())).toList();
+      viewNotes = dbNotes.allNotes.where((note) => note['title'].toLowerCase().contains(text.toLowerCase()) || note['desc'].toLowerCase().contains(text.toLowerCase()) || note['tag'].toLowerCase().contains(text.toLowerCase())).toList();
     });
   }
 
   void deleteNote(int index) {
-    Provider.of<AllNotes>(context, listen: false).allNotes.removeWhere((note) => note == viewNotes[index]);
-    setState(() => viewNotes = Provider.of<AllNotes>(context, listen: false).allNotes);
+    dbNotes.allNotes.removeWhere((note) => note == viewNotes[index]);
+    dbNotes.updateDataBase();
+    setState(() => viewNotes = dbNotes.allNotes);
     _clearTags();
   }
 
@@ -65,11 +74,11 @@ class _NotesState extends State<Notes> {
 
     // Создаем список активных тегов
     List<String> activeTags = [];
-    tags.forEach((tag) {
+    for (var tag in tags) {
       if (tag['active']) {
         activeTags.add(tag['tag']);
       }
-    });
+    }
 
     // Фильтруем заметки на основе активных тегов
     setState(() {
@@ -81,21 +90,20 @@ class _NotesState extends State<Notes> {
       }
 
       if (num == 0 || num == tags.length) {
-        viewNotes = Provider.of<AllNotes>(context, listen: false).allNotes;
+        viewNotes = dbNotes.allNotes;
       } else {
-        viewNotes = Provider.of<AllNotes>(context, listen: false).allNotes.where((note) => activeTags.contains(note['tag'])).toList();
+        viewNotes = dbNotes.allNotes.where((note) => activeTags.contains(note['tag'])).toList();
       }
     });
   }
 
   void onPined(int index) {
-    var statusPined = viewNotes[index]['pined'];
-    var i = Provider.of<AllNotes>(context, listen: false).allNotes.indexWhere((element) => element == viewNotes[index]);
-    Provider.of<AllNotes>(context, listen: false).allNotes[i]['pined'] = !statusPined;
+    var i = dbNotes.allNotes.indexWhere((element) => element == viewNotes[index]);
+    dbNotes.pinedNote(i);
     _filteredByUnpinedNotes();
     _filteredByPinedNotes();
     setState(() {
-      viewNotes = Provider.of<AllNotes>(context, listen: false).allNotes;
+      viewNotes = dbNotes.allNotes;
       _clearTags();
     });
   }
@@ -103,7 +111,7 @@ class _NotesState extends State<Notes> {
   void _filteredByPinedNotes() {
     var pinnedNotes = [];
     var unpinnedNotes = [];
-    for (var note in Provider.of<AllNotes>(context, listen: false).allNotes) {
+    for (var note in dbNotes.allNotes) {
       if (note['pined'] == true) {
         pinnedNotes.add(note);
       } else {
@@ -111,13 +119,14 @@ class _NotesState extends State<Notes> {
       }
     }
     pinnedNotes.addAll(unpinnedNotes);
-    Provider.of<AllNotes>(context, listen: false).allNotes = pinnedNotes;
+    dbNotes.allNotes = pinnedNotes;
+    dbNotes.updateDataBase();
   }
 
   void _filteredByUnpinedNotes() {
     var pinnedNotes = [];
     var unpinnedNotes = [];
-    for (var note in Provider.of<AllNotes>(context, listen: false).allNotes) {
+    for (var note in dbNotes.allNotes) {
       if (note['pined'] == true) {
         pinnedNotes.add(note);
       } else {
@@ -137,7 +146,8 @@ class _NotesState extends State<Notes> {
       }
     }
     pinnedNotes.addAll(unpinnedNotes);
-    Provider.of<AllNotes>(context, listen: false).allNotes = pinnedNotes;
+    dbNotes.allNotes = pinnedNotes;
+    dbNotes.updateDataBase();
   }
 
   @override
@@ -197,7 +207,7 @@ class _NotesState extends State<Notes> {
                           )
                         ]),
                         child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(context, '/createNote', arguments: {'key': viewNotes[index]['key']}),
+                            onTap: () => Navigator.pushNamed(context, '/createNote', arguments: {'key': viewNotes[index]['key'], 'pinPressed': () => onPined(index)}),
                             child: NoteCard(
                               title: viewNotes[index]['title'],
                               desc: viewNotes[index]['desc'],
@@ -212,8 +222,8 @@ class _NotesState extends State<Notes> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: shadowDark,
-          foregroundColor: brand,
+          backgroundColor: brand,
+          foregroundColor: shadowDark,
           splashColor: shadowDark,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),

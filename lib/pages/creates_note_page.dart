@@ -7,7 +7,7 @@ import 'package:flutter_tests/data/all_notes.dart';
 import 'package:flutter_tests/my_icons_icons.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 import 'package:flutter_tests/widgets/neomorphism_button.dart';
-import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
 class CreateNotePage extends StatefulWidget {
@@ -27,9 +27,16 @@ class _CreateNotePageState extends State<CreateNotePage> {
   late bool firstBuild;
   late int keyNote;
   late bool pined;
+    final _myBox = Hive.box('MyBox');
+    AllNotes dbNotes = AllNotes();
   @override
   void initState() {
     super.initState();
+    if (_myBox.get('ALLNOTES') == null) {
+      dbNotes.createInitialData();
+    } else {
+      dbNotes.loadData();
+    }
     indexNote = 0;
     firstBuild = true;
     _title = TextEditingController();
@@ -46,11 +53,11 @@ class _CreateNotePageState extends State<CreateNotePage> {
     if (firstBuild) {
       Map? arguments = ModalRoute.of(context)?.settings.arguments as Map?;
       if (arguments != null) {
-        Provider.of<AllNotes>(context).allNotes.forEach((element) {
+        for (var element in dbNotes.allNotes) {
           if (element['key'] == arguments['key']) {
             note = element;
           }
-        });
+        }
         _title.text = note['title'];
         _tag.text = note['tag'];
         _desc.text = note['desc'];
@@ -66,7 +73,8 @@ class _CreateNotePageState extends State<CreateNotePage> {
 
   void deleteNote(index) {
     if (index != -1) {
-      Provider.of<AllNotes>(context, listen: false).allNotes.removeWhere((element) => element['key'] == keyNote);
+      dbNotes.allNotes.removeWhere((element) => element['key'] == keyNote);
+      dbNotes.updateDataBase();
     }
     _showDialog('Deleted.');
     //ожидание показа диалогового окна перед закрытием страницы редактирования
@@ -83,15 +91,17 @@ class _CreateNotePageState extends State<CreateNotePage> {
       });
       if (indexNote != -1) {
         var i = -1;
-        for (var element in Provider.of<AllNotes>(context, listen: false).allNotes) {
+        for (var element in dbNotes.allNotes) {
           i = i + 1;
           if (element['key'] == keyNote) {
             break;
           }
         }
-        Provider.of<AllNotes>(context, listen: false).allNotes[i] = note;
+        dbNotes.allNotes[i] = note;
+        dbNotes.updateDataBase();
       } else {
-        Provider.of<AllNotes>(context, listen: false).addNote(note);
+        dbNotes.addNote(note);
+        dbNotes.updateDataBase();
       }
       _showDialog('Saved!');
     } else {
@@ -141,10 +151,8 @@ class _CreateNotePageState extends State<CreateNotePage> {
   @override
   Widget build(BuildContext context) {
     _updateFields();
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
+    return PopScope(
+      canPop: false,
       child: Scaffold(
         body: GestureDetector(
           onVerticalDragUpdate: (details) {
@@ -305,24 +313,6 @@ class _CreateNotePageState extends State<CreateNotePage> {
                     ),
                     Text(
                       'Save',
-                      style: TextStyle(color: brand, letterSpacing: 1.5),
-                    )
-                  ],
-                ),
-              ),
-              NeomorphismButton(
-                height: 60,
-                width: 60,
-                action: () => onPin,
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.push_pin_outlined,
-                      color: brand,
-                    ),
-                    Text(
-                      'Pin',
                       style: TextStyle(color: brand, letterSpacing: 1.5),
                     )
                   ],
