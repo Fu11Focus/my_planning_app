@@ -152,10 +152,8 @@ class _NotesState extends State<Notes> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
+    return PopScope(
+      onPopInvoked: (didPop) => false,
       child: Scaffold(
         endDrawer: const RightMenu(thisPage: 'Notes'),
         appBar: const MyAppBar(icon: Icons.mode_edit_outlined, text: 'Notes'),

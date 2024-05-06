@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tests/widgets/del_container.dart';
 import 'package:flutter_tests/widgets/my_appbar.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
-import 'package:popover/popover.dart';
 
 class HabittsTracker extends StatelessWidget {
   const HabittsTracker({super.key});
@@ -16,29 +14,14 @@ class HabittsTracker extends StatelessWidget {
         child: Builder(builder: (context) {
           return GestureDetector(
             child: const Icon(Icons.add),
-            onTap: () {
-              showPopover(
+            onTap: () => showDialog(
                 context: context,
-                bodyBuilder: (context) => Container(
-                  width: 10,
-                  height: 10,
-                  color: Colors.cyan,
-                  child: Center(
-                    child: Text(
-                      'Hello',
-                      style: TextStyle(fontSize: 40),
-                    ),
-                  ),
-                ),
-                onPop: () => print('Popover was popped!'),
-                direction: PopoverDirection.bottom,
-                backgroundColor: Colors.white,
-                width: 200,
-                height: 400,
-                arrowHeight: 15,
-                arrowWidth: 30,
-              );
-            },
+                builder: (context) => Builder(
+                    builder: (context) => Container(
+                          width: 50,
+                          height: 50,
+                          decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(20)), color: Colors.red),
+                        ))),
           );
         }),
       ),

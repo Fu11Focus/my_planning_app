@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_tests/data/wish_board_items.dart';
 import 'package:flutter_tests/util/color_palette.dart';
@@ -37,7 +37,7 @@ class _WishBoardPageState extends State<WishBoardPage> {
     } else {
       dbItems.loadData();
     }
-
+    imgSelectPath = '...';
     _imageFile = null;
     wishboard = dbItems.wishItems;
 
@@ -188,7 +188,62 @@ class _WishBoardPageState extends State<WishBoardPage> {
               gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
               itemBuilder: (context, index) => Builder(builder: (context) {
                 return GestureDetector(
+                  onTap: () => showAdaptiveDialog(
+                    context: context,
+                    builder: (context) => Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CarouselSlider(
+                          options: CarouselOptions(
+                            height: MediaQuery.of(context).size.height * 0.7,
+                            aspectRatio: 16 / 9,
+                            viewportFraction: 0.8,
+                            initialPage: index,
+                            enableInfiniteScroll: true,
+                            reverse: false,
+                            autoPlay: false,
+                            autoPlayInterval: const Duration(seconds: 3),
+                            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enlargeCenterPage: true,
+                            enlargeFactor: 0.4,
+                            scrollDirection: Axis.horizontal,
+                          ),
+                          items: wishboard
+                              .map((element) => Builder(
+                                    builder: (BuildContext context) {
+                                      return element['img'] != null
+                                          ? Center(
+                                              child: ClipRRect(
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  child: Image.file(
+                                                    File(element['img']),
+                                                  )),
+                                            )
+                                          : Center(
+                                              child: Container(
+                                              padding: const EdgeInsets.all(20),
+                                              decoration: BoxDecoration(color: const Color(0xcc292d32), borderRadius: BorderRadius.circular(12)),
+                                              child: Text(
+                                                element['txt'],
+                                                style: const TextStyle(color: txt, fontSize: 24, decoration: TextDecoration.none),
+                                              ),
+                                            ));
+                                    },
+                                  ))
+                              .toList(),
+                        ),
+                        TextButton(
+                            onPressed: Navigator.of(context).pop,
+                            child: const Text(
+                              'Close',
+                              style: TextStyle(color: hintTxt, fontSize: 18),
+                            )),
+                      ],
+                    ),
+                  ),
                   onLongPress: () => showPopover(
+                    direction: (index > 3) ? PopoverDirection.top : PopoverDirection.bottom,
                     backgroundColor: bg,
                     width: 150,
                     height: 50,
