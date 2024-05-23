@@ -33,11 +33,15 @@ ThemeData mainTheme() => ThemeData(
     checkboxTheme: CheckboxThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5.0),
+        side: MaterialStateBorderSide.resolveWith(
+          (states) => const BorderSide(
+            width: 1.0,
+            color: brand,
+          ),
+        ),
       ),
-      fillColor: MaterialStateProperty.all(brand),
-      checkColor: MaterialStateProperty.all(shadowDark),
-      side: const BorderSide(style: BorderStyle.none),
+      fillColor: MaterialStateProperty.all(bg),
+      checkColor: MaterialStateProperty.all(brand),
     ),
-    // listTileTheme: const ListTileThemeData(titleTextStyle: TextStyle(color: Colors.red)),
     textSelectionTheme: const TextSelectionThemeData(selectionColor: brand, cursorColor: brand),
     textTheme: const TextTheme());

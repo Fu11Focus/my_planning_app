@@ -145,24 +145,35 @@ class _WishBoardPageState extends State<WishBoardPage> {
                       ],
                     ),
                     actions: [
-                      TextButton(
-                        onPressed: saveVisible,
-                        child: const Text(
-                          'Save',
-                          style: TextStyle(color: txt),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextButton(
+                          onPressed: saveVisible,
+                          style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: brand,
+                            ),
+                          ),
                         ),
                       ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          setState(() {
-                            imgSelectPath = '...';
-                            textVisible.text = '';
-                          });
-                        },
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(color: txt),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            setState(() {
+                              imgSelectPath = '...';
+                              textVisible.text = '';
+                            });
+                          },
+                          style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(fontSize: 20, color: txt),
+                          ),
                         ),
                       ),
                     ],

@@ -19,6 +19,7 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('MyBox');
   await Hive.openBox('WishBox');
+  await Hive.openBox('ToDoListBox');
 
   runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (context) => AllNotes())], child: const MyApp()));
 }
