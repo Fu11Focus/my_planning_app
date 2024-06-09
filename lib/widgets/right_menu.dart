@@ -53,7 +53,6 @@ class RightMenu extends StatelessWidget {
         children: <Widget>[
           buildListTile(Icons.home, 'Whish Board', '/wishboard'),
           buildListTile(Icons.task_sharp, 'Habbits Tracker', '/habbitsTracker'),
-          buildListTile(Icons.calendar_today, 'Today', '/today'),
           buildListTile(Icons.calendar_month, 'Calendar', '/calendar'),
           buildListTile(Icons.inbox, 'Inbox', '/inbox'),
           buildListTile(Icons.create_rounded, 'Notes', '/notes'),

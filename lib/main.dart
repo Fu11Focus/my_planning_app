@@ -9,7 +9,6 @@ import 'package:flutter_tests/pages/project_create_page.dart';
 import 'package:flutter_tests/pages/projects_page.dart';
 import 'package:flutter_tests/pages/settings_page.dart';
 import 'package:flutter_tests/pages/statistics_page.dart';
-import 'package:flutter_tests/pages/today_page.dart';
 import 'package:flutter_tests/util/main_theme.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +19,7 @@ void main() async {
   await Hive.openBox('MyBox');
   await Hive.openBox('WishBox');
   await Hive.openBox('ToDoListBox');
+  await Hive.openBox('HabitsBox');
 
   runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (context) => AllNotes())], child: const MyApp()));
 }
@@ -35,8 +35,7 @@ class MyApp extends StatelessWidget {
       home: const WishBoardPage(),
       routes: {
         '/wishboard': (context) => const WishBoardPage(),
-        '/habbitsTracker': (context) => const HabittsTracker(),
-        '/today': (context) => const Today(),
+        '/habbitsTracker': (context) => const HabitsTracker(),
         '/calendar': (context) => const Calendar(),
         '/inbox': (context) => const Inbox(),
         '/notes': (context) => const Notes(),

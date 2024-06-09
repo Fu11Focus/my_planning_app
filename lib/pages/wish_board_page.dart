@@ -80,11 +80,11 @@ class _WishBoardPageState extends State<WishBoardPage> {
     }
   }
 
-  void _pickImage() async {
+  void _pickImage(Function setDialogState) async {
     result = await FilePicker.platform.pickFiles(type: FileType.image);
     if (result != null) {
       File image = File(result!.files.single.path!);
-      setState(() => imgSelectPath = image.path);
+      setDialogState(() => imgSelectPath = image.path);
     }
   }
 
@@ -95,91 +95,91 @@ class _WishBoardPageState extends State<WishBoardPage> {
     });
   }
 
+  void showDialogWishboard() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => StatefulBuilder(
+            builder: (context, setDialogState) => AlertDialog(
+                  actionsPadding: const EdgeInsets.all(0),
+                  insetPadding: const EdgeInsets.only(top: 10, bottom: 300, left: 20, right: 20),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  contentPadding: const EdgeInsets.all(0),
+                  contentTextStyle: const TextStyle(color: txt),
+                  backgroundColor: bg,
+                  elevation: 0,
+                  content: Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 20, right: 20, bottom: 40, left: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 5), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 5)]),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(imgSelectPath.length > 20 ? '${imgSelectPath.substring(0, 20)}...' : imgSelectPath),
+                            IconButton(
+                              padding: const EdgeInsets.all(0),
+                              color: shadowDark,
+                              onPressed: () => _pickImage(setDialogState),
+                              icon: const Icon(
+                                Icons.image,
+                                color: txt,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(top: 20),
+                        decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)), boxShadow: [BoxShadow(color: shadowLight, offset: Offset(0, -5), blurRadius: 5)]),
+                        child: TextField(
+                          controller: textVisible,
+                          style: const TextStyle(color: txt),
+                          maxLines: 10,
+                          decoration: const InputDecoration(hintText: 'Write your goals, dreams, visible :)'),
+                        ),
+                      )
+                    ],
+                  ),
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextButton(
+                        onPressed: saveVisible,
+                        style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
+                        child: const Text(
+                          'Save',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: brand,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          setState(() {
+                            imgSelectPath = '...';
+                            textVisible.text = '';
+                          });
+                        },
+                        style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
+                        child: const Text(
+                          'Cancel',
+                          style: TextStyle(fontSize: 20, color: txt),
+                        ),
+                      ),
+                    ),
+                  ],
+                )));
+  }
+
   @override
   Widget build(BuildContext context) {
-    void showDialogWishboard() {
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) => StatefulBuilder(
-              builder: (context, setState) => AlertDialog(
-                    actionsPadding: const EdgeInsets.all(0),
-                    insetPadding: const EdgeInsets.only(top: 10, bottom: 300, left: 20, right: 20),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    contentPadding: const EdgeInsets.all(0),
-                    contentTextStyle: const TextStyle(color: txt),
-                    backgroundColor: bg,
-                    elevation: 0,
-                    content: Column(
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 20, right: 20, bottom: 40, left: 20),
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 5), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 5)]),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(imgSelectPath.length > 20 ? '${imgSelectPath.substring(0, 20)}...' : imgSelectPath),
-                              IconButton(
-                                padding: const EdgeInsets.all(0),
-                                color: shadowDark,
-                                onPressed: _pickImage,
-                                icon: const Icon(
-                                  Icons.image,
-                                  color: txt,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(top: 20),
-                          decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)), boxShadow: [BoxShadow(color: shadowLight, offset: Offset(0, -5), blurRadius: 5)]),
-                          child: TextField(
-                            controller: textVisible,
-                            style: const TextStyle(color: txt),
-                            maxLines: 10,
-                            decoration: const InputDecoration(hintText: 'Write your goals, dreams, visible :)'),
-                          ),
-                        )
-                      ],
-                    ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextButton(
-                          onPressed: saveVisible,
-                          style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                          child: const Text(
-                            'Save',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: brand,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            setState(() {
-                              imgSelectPath = '...';
-                              textVisible.text = '';
-                            });
-                          },
-                          style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                          child: const Text(
-                            'Cancel',
-                            style: TextStyle(fontSize: 20, color: txt),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )));
-    }
-
     return Scaffold(
       endDrawer: const RightMenu(thisPage: 'Whish Board'),
       appBar: const MyAppBar(

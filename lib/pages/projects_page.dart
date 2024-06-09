@@ -16,8 +16,8 @@ class Projects extends StatelessWidget {
           children: [
             Expanded(
               child: ListView(children: const [
-                SprintCard(status: 'in progress', start: '01.05.2024', finish: '24.07.2024', img: 'assets/imgs/xbox_gamepad.jpg'),
-                SprintCard(status: 'Archive', start: '01.05.2024', finish: '24.07.2024', img: 'assets/imgs/xbox_gamepad.jpg'),
+                // SprintCard(status: 'in progress', start: '01.05.2024', finish: '24.07.2024', img: 'assets/imgs/xbox_gamepad.jpg'),
+                // SprintCard(status: 'Archive', start: '01.05.2024', finish: '24.07.2024', img: 'assets/imgs/xbox_gamepad.jpg'),
               ]),
             ),
           ],
