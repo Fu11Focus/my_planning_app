@@ -1,10 +1,14 @@
 import 'dart:ui' show Color;
 
 //first version
-const Color bg = Color(0xff292d32);
-// const Color bg = Color(0xff1d232e);
-const Color shadowDark = Color(0xff232323);
-const Color shadowLight = Color(0xff30343a);
+// const Color bg = Color(0xff292d32);
+// const Color shadowDark = Color(0xff232323);
+// const Color shadowLight = Color(0xff30343a);
+
+const Color bg = Color.fromRGBO(41, 45, 50, 1); //основная тема приложения
+// const Color bg = Color.fromRGBO(31, 72, 91, 1); //голубой
+const Color shadowDark = Color.fromRGBO(0, 0, 0, 0.25);
+const Color shadowLight = Color.fromRGBO(255, 255, 255, 0.1);
 const Color txt = Color(0xffccd0cf);
 const Color hintTxt = Color(0xff5C5C5C);
 const Color brand = Color(0xff2fb9c9);

@@ -29,7 +29,7 @@ class _CalendarState extends State<Calendar> {
   TextEditingController newTaskController = TextEditingController();
   AdvancedCalendarController controller = AdvancedCalendarController.today();
 
-  List allTaskForToday = [];
+  List<Widget> allTaskForToday = [];
 
   @override
   void initState() {
@@ -52,10 +52,99 @@ class _CalendarState extends State<Calendar> {
     }
   }
 
-  List _getAllTaskForToday() {
-    List todo = todoDB.todoList.where((element) => DateFormat('dd MMM yyyy').format(element['date']) == DateFormat('dd MMM yyyy').format(selectDate) || element['done'] == false).map((e) => {'id': e['id'], 'title': e['title'], 'type': 'todo', 'done': e['done'], 'date': e['date']}).toList();
-    List habits = habitsDB.habbitsList.where((element) => element['daysOfWeek'].contains(DateFormat('EEE').format(selectDate).toString())).map((e) => {'id': e['id'], 'title': e['title'], 'type': 'habit', 'done': e['progress'].containsKey(DateFormat('dd MMM yyyy').format(selectDate)) ? e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] : false, 'date': selectDate}).toList();
-    return todo + habits;
+  List<Widget> _getAllTaskForToday() {
+    List<Widget> allTask = [];
+    todoDB.todoList.forEach((e) {
+      if (DateFormat('dd MMM yyyy').format(e['date']) == DateFormat('dd MMM yyyy').format(selectDate)) {
+        allTask.add(
+          CheckboxListTile(
+            title: Text(
+              e['title'],
+              style: TextStyle(
+                color: e['done'] ? hintTxt : txt,
+                decoration: e['done'] ? TextDecoration.lineThrough : TextDecoration.none,
+                decorationColor: hintTxt,
+              ),
+            ),
+            value: e['done'],
+            onChanged: (checked) {
+              _toggleTodoStatus(e['id'], checked);
+            },
+            subtitle: Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
+            overlayColor: const MaterialStatePropertyAll(brand),
+            fillColor: const MaterialStatePropertyAll(shadowDark),
+          ),
+        );
+      }
+      if (DateTime(e['date'].year, e['date'].month, e['date'].day).isBefore(DateTime(
+            DateTime.now().year,
+            DateTime.now().month,
+            DateTime.now().day,
+          )) &&
+          !e['done'] &&
+          DateFormat('dd MMM yyyy').format(DateTime.now()) == DateFormat('dd MMM yyyy').format(selectDate)) {
+        allTask.add(CheckboxListTile(
+          title: Text(
+            e['title'] + ' (${DateFormat('dd.MM.yyyy').format(e['date'])})',
+            style: TextStyle(
+              color: Colors.red[300],
+              decoration: e['done'] ? TextDecoration.lineThrough : TextDecoration.none,
+              decorationColor: hintTxt,
+            ),
+          ),
+          value: e['done'],
+          onChanged: (checked) {
+            _toggleTodoStatus(e['id'], checked);
+          },
+          subtitle: Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
+          overlayColor: const MaterialStatePropertyAll(brand),
+          fillColor: const MaterialStatePropertyAll(shadowDark),
+        ));
+      }
+    });
+//выбираем привычки
+    habitsDB.habbitsList.forEach((e) {
+      if (e['progress'].containsKey(DateFormat('dd MMM yyyy').format(selectDate)) && DateFormat('dd MMM yyyy').format(selectDate) == DateFormat('dd MMM yyyy').format(DateTime.now())) {
+        allTask.add(CheckboxListTile(
+          title: Text(
+            e['title'],
+            style: TextStyle(
+              color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt,
+              decoration: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? TextDecoration.lineThrough : TextDecoration.none,
+              decorationColor: hintTxt,
+            ),
+          ),
+          value: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)],
+          onChanged: (checked) {
+            _toggleHabitStatus(e['id'], checked);
+          },
+          subtitle: Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
+          overlayColor: const MaterialStatePropertyAll(brand),
+          fillColor: const MaterialStatePropertyAll(shadowDark),
+        ));
+      } else if (e['progress'].containsKey(DateFormat('dd MMM yyyy').format(selectDate))) {
+        allTask.add(CheckboxListTile(
+          title: Text(
+            e['title'],
+            style: TextStyle(
+              color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt,
+              decoration: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? TextDecoration.lineThrough : TextDecoration.none,
+              decorationColor: hintTxt,
+            ),
+          ),
+          value: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)],
+          onChanged: (checked) {
+            final snackBar = SnackBar(content: Text('This day has not yet come!', style: TextStyle(color: Colors.red[300])));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          },
+          subtitle: Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
+          overlayColor: const MaterialStatePropertyAll(brand),
+          fillColor: const MaterialStatePropertyAll(shadowDark),
+        ));
+      }
+    });
+
+    return allTask;
   }
 
   void _addTodo() {
@@ -63,14 +152,35 @@ class _CalendarState extends State<Calendar> {
       setState(() {
         todoDB.addTodoItem(newTaskController.text, false, dateForNewTask);
         allTaskForToday = _getAllTaskForToday();
+        dateForNewTask = DateTime.now();
       });
       Navigator.pop(context);
       newTaskController.text = '';
+      dateForNewTask = DateTime.now();
     }
   }
 
   Future<void> _selectDate(Function setDialogState) async {
-    DateTime? picked = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(2000), lastDate: DateTime(2100));
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  surface: Theme.of(context).scaffoldBackgroundColor,
+                  primary: brand, // header background color
+                  onPrimary: txt, // header text color
+                  onSurface: txt, // body text color
+                ),
+            dialogBackgroundColor: Colors.white, // background color of the date picker dialog
+          ),
+          child: child!,
+        );
+      },
+    );
 
     if (picked != null) {
       setDialogState(() {
@@ -94,15 +204,18 @@ class _CalendarState extends State<Calendar> {
           elevation: 0,
           content: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            height: 100,
+            height: 120,
             child: Column(children: [
-              TextField(
-                controller: newTaskController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Enter a task',
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: TextField(
+                  controller: newTaskController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter a task',
+                  ),
+                  style: const TextStyle(color: txt),
                 ),
-                style: const TextStyle(color: txt),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -140,7 +253,7 @@ class _CalendarState extends State<Calendar> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextButton(
-                onPressed: () => {Navigator.pop(context), newTaskController.text = ''},
+                onPressed: () => {Navigator.pop(context), newTaskController.text = '', dateForNewTask = DateTime.now()},
                 style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
                 child: const Text(
                   'Cancel',
@@ -184,23 +297,7 @@ class _CalendarState extends State<Calendar> {
         children: [
           MyAdvencedCalendar(controller: controller),
           Expanded(
-            child: ListView.builder(
-              itemCount: allTaskForToday.length,
-              itemBuilder: (context, index) => CheckboxListTile(
-                title: _getTitleSettings(index),
-                value: allTaskForToday[index]['done'],
-                onChanged: (checked) {
-                  if (allTaskForToday[index]['type'] == 'todo') {
-                    _toggleTodoStatus(allTaskForToday[index]['id'], checked);
-                  } else {
-                    _toggleHabitStatus(allTaskForToday[index]['id'], checked);
-                  }
-                },
-                subtitle: Text(allTaskForToday[index]['type'], style: TextStyle(color: allTaskForToday[index]['done'] ? hintTxt : txt)),
-                overlayColor: const MaterialStatePropertyAll(brand),
-                fillColor: const MaterialStatePropertyAll(shadowDark),
-              ),
-            ),
+            child: ListView.builder(itemCount: allTaskForToday.length, itemBuilder: (context, index) => allTaskForToday[index]),
           )
         ],
       ),
@@ -215,17 +312,5 @@ class _CalendarState extends State<Calendar> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
     );
-  }
-
-  Widget _getTitleSettings(int index) {
-    if (allTaskForToday[index]['type'] == 'todo') {
-      return selectDate.isAfter(allTaskForToday[index]['date']) && selectDate.difference(allTaskForToday[index]['date']).inDays > 0.5
-          ? Text('${allTaskForToday[index]['title']} (${DateFormat('dd MMM yyyy').format(allTaskForToday[index]['date'])})', style: TextStyle(color: Colors.red[300]))
-          : allTaskForToday[index]['done']
-              ? Text(allTaskForToday[index]['title'], style: const TextStyle(color: hintTxt, decorationColor: hintTxt, decoration: TextDecoration.lineThrough))
-              : Text(allTaskForToday[index]['title'], style: const TextStyle(color: txt));
-    } else {
-      return Text(allTaskForToday[index]['title'], style: allTaskForToday[index]['done'] ? const TextStyle(color: hintTxt, decorationColor: hintTxt, decoration: TextDecoration.lineThrough) : const TextStyle(color: txt));
-    }
   }
 }

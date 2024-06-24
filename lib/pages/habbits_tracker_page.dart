@@ -9,6 +9,7 @@ import 'package:flutter_tests/widgets/my_appbar.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
 import 'package:flutter_tests/widgets/week_day_button.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
 
 class HabitsTracker extends StatefulWidget {
   const HabitsTracker({super.key});
@@ -29,11 +30,13 @@ Map daysOfWeek = {
   'Fri': false,
   'Sat': false,
 };
+DateTime startNewHabit = DateTime.now();
+DateTime finishNewHabit = DateTime.now().add(Duration(days: 30));
 final _myBox = Hive.box('HabitsBox');
 HabitsDB dbHabits = HabitsDB();
 
 class _HabitsTrackerState extends State<HabitsTracker> {
-  void saveHabit() {
+  void saveHabit({id = -1}) {
     if (editNewHabitController.text.isNotEmpty) {
       List<String> tamp = [];
       if (daysOfWeek['Sun']) {
@@ -57,21 +60,31 @@ class _HabitsTrackerState extends State<HabitsTracker> {
       if (daysOfWeek['Sat']) {
         tamp.add('Sat');
       }
-      setState(() {
-        dbHabits.addHabit(editNewHabitController.text, tamp);
-        habitsList = dbHabits.habbitsList;
-      });
-      editNewHabitController.text = '';
-      daysOfWeek = {
-        'Sun': false,
-        'Mon': false,
-        'Tue': false,
-        'Wed': false,
-        'Thu': false,
-        'Fri': false,
-        'Sat': false,
-      };
-      Navigator.pop(context);
+      if (tamp.isEmpty) {
+        //ни один день недели не выбран
+        final snackBar = SnackBar(content: Text('Select days of week!', style: TextStyle(color: Colors.red[300])));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        setState(() {
+          dbHabits.addHabit(editNewHabitController.text, tamp, startNewHabit, finishNewHabit);
+          habitsList = dbHabits.habbitsList;
+        });
+        editNewHabitController.text = '';
+        daysOfWeek = {
+          'Sun': false,
+          'Mon': false,
+          'Tue': false,
+          'Wed': false,
+          'Thu': false,
+          'Fri': false,
+          'Sat': false,
+        };
+        Navigator.pop(context);
+      }
+    } else {
+      //название привычки не задано
+      final snackBar = SnackBar(content: Text('Enter habit name', style: TextStyle(color: Colors.red[300])));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
@@ -99,7 +112,78 @@ class _HabitsTrackerState extends State<HabitsTracker> {
     return (totalDays > 0 ? (completedDays / totalDays) * 100 : 0).round();
   }
 
-  void createHabitDialog() {
+  Future<void> _selectStartDate(Function setDialogState) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  surface: Theme.of(context).scaffoldBackgroundColor,
+                  primary: brand, // header background color
+                  onPrimary: txt, // header text color
+                  onSurface: txt, // body text color
+                ),
+            dialogBackgroundColor: Colors.white, // background color of the date picker dialog
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setDialogState(() {
+        startNewHabit = picked;
+      });
+    }
+  }
+
+  Future<void> _selectFinishDate(Function setDialogState) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  surface: Theme.of(context).scaffoldBackgroundColor,
+                  primary: brand, // header background color
+                  onPrimary: txt, // header text color
+                  onSurface: txt, // body text color
+                ),
+            dialogBackgroundColor: Colors.white, // background color of the date picker dialog
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      setDialogState(() {
+        finishNewHabit = picked;
+      });
+    }
+  }
+
+  void createHabitDialog(
+      {title = '',
+      daysOfWeekHabit = const {
+        'Sun': false,
+        'Mon': false,
+        'Tue': false,
+        'Wed': false,
+        'Thu': false,
+        'Fri': false,
+        'Sat': false,
+      },
+      id = -1}) {
+    editNewHabitController.text = title;
+    daysOfWeek = daysOfWeekHabit;
     showDialog(
         context: context,
         builder: (context) => StatefulBuilder(
@@ -126,7 +210,7 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                   titleTextStyle: TextStyle(color: txt),
                   content: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
-                    height: 150,
+                    height: 300,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -200,7 +284,64 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                                   dayOfWeek: 'Sat',
                                 ),
                               ],
-                            )
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Start date:',
+                              style: TextStyle(color: txt),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 40),
+                                  child: Text(
+                                    DateFormat('dd.MM.yyyy').format(startNewHabit),
+                                    style: TextStyle(color: txt),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => _selectStartDate(setState),
+                                  style: const ButtonStyle(
+                                    backgroundColor: MaterialStatePropertyAll(shadowDark),
+                                  ),
+                                  child: const Text('Select date',
+                                      style: TextStyle(
+                                        color: txt,
+                                      )),
+                                )
+                              ],
+                            ),
+                            Text(
+                              'Finish date:',
+                              style: TextStyle(color: txt),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 40),
+                                  child: Text(
+                                    DateFormat('dd.MM.yyyy').format(finishNewHabit),
+                                    style: TextStyle(color: txt),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => _selectFinishDate(setState),
+                                  style: const ButtonStyle(
+                                    backgroundColor: MaterialStatePropertyAll(shadowDark),
+                                  ),
+                                  child: const Text('Select date',
+                                      style: TextStyle(
+                                        color: txt,
+                                      )),
+                                )
+                              ],
+                            ),
                           ],
                         )
                       ],
@@ -208,7 +349,7 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                   ),
                   actions: [
                     TextButton(
-                      onPressed: saveHabit,
+                      onPressed: () => saveHabit(id: id),
                       style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
                       child: const Text(
                         'Save',
@@ -247,71 +388,86 @@ class _HabitsTrackerState extends State<HabitsTracker> {
     return Scaffold(
       endDrawer: const RightMenu(thisPage: 'Habbits Tracker'),
       appBar: const MyAppBar(icon: Icons.task_alt_sharp, text: 'Habbits Tracker'),
-      body: ListView.builder(
-        itemCount: habitsList.length,
-        itemBuilder: ((context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Slidable(
-              endActionPane: ActionPane(motion: const StretchMotion(), children: [
-                SlidableAction(
-                  autoClose: true,
-                  onPressed: (context) => {
-                    setState(() {
-                      dbHabits.removeHabit(index);
-                      habitsList = dbHabits.habbitsList;
-                    })
-                  },
-                  icon: MyIcons.trash,
-                  backgroundColor: bg,
-                ),
-              ]),
-              child: Container(
-                  padding: const EdgeInsets.all(15),
-                  decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12), border: Border.all(color: shadowLight), boxShadow: const [BoxShadow(color: shadowDark, offset: Offset(10, 10), blurRadius: 10), BoxShadow(color: shadowLight, offset: Offset(-10, -10), blurRadius: 10)]),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            habitsList[index]['title'].length > 25 ? '${habitsList[index]['title'].substring(0, 25)}...' : habitsList[index]['title'],
-                            style: TextStyle(color: txt, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.start,
-                          ),
-                          Divider(
-                            height: 10,
-                            color: bg,
-                          ),
-                          Text(
-                            '${habitsList[index]['daysOfWeek'].contains('Sun') ? 'Sun ' : ''}${habitsList[index]['daysOfWeek'].contains('Mon') ? 'Mon ' : ''}${habitsList[index]['daysOfWeek'].contains('Mon') ? 'Tue ' : ''}${habitsList[index]['daysOfWeek'].contains('Wed') ? 'Wed ' : ''}${habitsList[index]['daysOfWeek'].contains('Thu') ? 'Thu ' : ''}${habitsList[index]['daysOfWeek'].contains('Fri') ? 'Fri ' : ''}${habitsList[index]['daysOfWeek'].contains('Sat') ? 'Sat' : ''}',
-                            style: TextStyle(
-                              color: txt,
+      body: habitsList.isEmpty
+          ? Center(
+              child: Text(
+                'Enter on "+" for create ur first habit.',
+                style: TextStyle(color: hintTxt, fontSize: 20),
+              ),
+            )
+          : ListView.builder(
+              itemCount: habitsList.length,
+              itemBuilder: ((context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  child: Slidable(
+                    endActionPane: ActionPane(motion: const StretchMotion(), children: [
+                      SlidableAction(
+                        autoClose: true,
+                        onPressed: (context) => {
+                          setState(() {
+                            dbHabits.removeHabit(index);
+                            habitsList = dbHabits.habbitsList;
+                          })
+                        },
+                        icon: MyIcons.trash,
+                        backgroundColor: bg,
+                      ),
+                    ]),
+                    child: Container(
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12), border: Border.all(color: shadowLight), boxShadow: const [BoxShadow(color: shadowDark, offset: Offset(10, 10), blurRadius: 10), BoxShadow(color: shadowDark, offset: Offset(-10, 10), blurRadius: 10)]),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  habitsList[index]['title'].length > 25 ? '${habitsList[index]['title'].substring(0, 25)}...' : habitsList[index]['title'],
+                                  style: TextStyle(color: txt, fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.start,
+                                ),
+                                Divider(
+                                  height: 10,
+                                  color: bg,
+                                ),
+                                Text(
+                                  '${habitsList[index]['daysOfWeek'].contains('Sun') ? 'Sun ' : ''}${habitsList[index]['daysOfWeek'].contains('Mon') ? 'Mon ' : ''}${habitsList[index]['daysOfWeek'].contains('Tue') ? 'Tue ' : ''}${habitsList[index]['daysOfWeek'].contains('Wed') ? 'Wed ' : ''}${habitsList[index]['daysOfWeek'].contains('Thu') ? 'Thu ' : ''}${habitsList[index]['daysOfWeek'].contains('Fri') ? 'Fri ' : ''}${habitsList[index]['daysOfWeek'].contains('Sat') ? 'Sat' : ''}',
+                                  style: TextStyle(
+                                    color: txt,
+                                  ),
+                                ),
+                                Divider(
+                                  height: 10,
+                                  color: bg,
+                                ),
+                                Text('${DateFormat('dd.MM.yyyy').format(habitsList[index]['start'])} - ${DateFormat('dd.MM.yyyy').format(habitsList[index]['finish'])}', style: TextStyle(color: txt)),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        'Progress:\n${calculateHabitProgress(habitsList[index])}%',
-                        style: TextStyle(
-                          color: txt,
-                        ),
-                      ),
-                    ],
-                  )),
+                            Text(
+                              'Progress:\n${calculateHabitProgress(habitsList[index])}%',
+                              style: TextStyle(
+                                color: txt,
+                              ),
+                            ),
+                          ],
+                        )),
+                  ),
+                );
+              }),
             ),
-          );
-        }),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: createHabitDialog,
+      floatingActionButton: FloatingActionButton.small(
+        onPressed: () => createHabitDialog(daysOfWeekHabit: daysOfWeek),
         backgroundColor: brand,
         foregroundColor: shadowDark,
         child: const Icon(
           Icons.add,
+          color: bg,
+          size: 20,
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

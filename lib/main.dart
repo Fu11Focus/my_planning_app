@@ -20,6 +20,7 @@ void main() async {
   await Hive.openBox('WishBox');
   await Hive.openBox('ToDoListBox');
   await Hive.openBox('HabitsBox');
+  await Hive.openBox('InboxListBox');
 
   runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (context) => AllNotes())], child: const MyApp()));
 }
