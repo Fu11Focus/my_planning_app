@@ -7,6 +7,7 @@ import 'package:flutter_tests/data/todo_list.dart';
 import 'package:flutter_tests/my_icons_icons.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 import 'package:flutter_tests/widgets/my_appbar.dart';
+import 'package:flutter_tests/widgets/neomorphism_button.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -34,9 +35,9 @@ class _InboxState extends State<Inbox> {
     }
 
     if (_myBox2.get('TODOLIST') == null) {
-      inboxDB.createInitialData();
+      todoDB.createInitialData();
     } else {
-      inboxDB.loadData();
+      todoDB.loadData();
     }
     super.initState();
   }
@@ -229,44 +230,60 @@ class _InboxState extends State<Inbox> {
           ? Center(
               child: Text('Add another task without date for to do!', style: TextStyle(color: hintTxt, fontSize: 20)),
             )
-          : ListView.builder(
-              itemCount: inboxDB.inboxList.length,
-              primary: true,
-              itemBuilder: ((context, index) => Slidable(
-                    endActionPane: ActionPane(
-                      motion: const StretchMotion(),
-                      children: [
-                        SlidableAction(
-                          autoClose: true,
-                          onPressed: (context) => setState(() {
-                            inboxDB.removeFromInbox(inboxDB.inboxList[index]['id']);
-                          }),
-                          icon: MyIcons.trash,
-                          backgroundColor: bg,
+          : Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: ListView.builder(
+                  itemCount: inboxDB.inboxList.length,
+                  primary: true,
+                  itemBuilder: ((context, index) => Slidable(
+                        endActionPane: ActionPane(
+                          motion: const StretchMotion(),
+                          children: [
+                            SlidableAction(
+                              autoClose: true,
+                              onPressed: (context) => setState(() {
+                                inboxDB.removeFromInbox(inboxDB.inboxList[index]['id']);
+                              }),
+                              icon: MyIcons.trash,
+                              backgroundColor: bg,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: GestureDetector(
-                        onTap: () => _addToDoDialog(inboxDB.inboxList[index]['title'], inboxDB.inboxList[index]['id']),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                          padding: EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8), border: Border.all(color: shadowLight), boxShadow: [BoxShadow(color: shadowDark, offset: Offset(8, 8), blurRadius: 8), BoxShadow(color: shadowDark, offset: Offset(-8, 8), blurRadius: 8)], color: bg),
-                          child: Text(inboxDB.inboxList[index]['title'], style: TextStyle(color: txt)),
-                        )),
-                  ))),
-      floatingActionButton: FloatingActionButton.small(
-        onPressed: _addTodoDialog,
-        backgroundColor: brand,
-        foregroundColor: shadowDark,
-        child: const Icon(
-          Icons.add,
-          color: bg,
-          size: 20,
+                        child: GestureDetector(
+                            onTap: () => _addToDoDialog(inboxDB.inboxList[index]['title'], inboxDB.inboxList[index]['id']),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: bg,
+                                /*border: Border.all(color: shadowLight),*/ boxShadow: [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 10), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 10)],
+                                // gradient: LinearGradient(colors: [
+                                //   Color(0xff24262b),
+                                //   bg,
+                                //   Color(0xff36383d)
+                                // ], stops: [
+                                //   0.2,
+                                //   0.5,
+                                //   1,
+                                // ], begin: Alignment.topLeft, end: Alignment.bottomRight, transform: GradientRotation(0.9)),
+                              ),
+                              child: Text(inboxDB.inboxList[index]['title'], style: TextStyle(color: txt, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                            )),
+                      ))),
+            ),
+      bottomNavigationBar: SizedBox(
+        height: 80,
+        child: Center(
+          child: NeomorphismButton(
+            action: _addTodoDialog,
+            height: 40,
+            width: 40,
+            child: const Icon(Icons.add, color: brand),
+          ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

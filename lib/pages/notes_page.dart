@@ -11,6 +11,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
+import '../widgets/neomorphism_button.dart';
+
 class Notes extends StatefulWidget {
   const Notes({Key? key}) : super(key: key);
 
@@ -180,56 +182,59 @@ class _NotesState extends State<Notes> {
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                  itemCount: viewNotes.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      child: Slidable(
-                        endActionPane: ActionPane(motion: const StretchMotion(), children: [
-                          SlidableAction(
-                            autoClose: true,
-                            onPressed: (context) => {
-                              setState(
-                                () => onPined(index),
+              child: viewNotes.isEmpty
+                  ? const Center(
+                      child: Text('Create ur first note. \nPress on "+".', style: TextStyle(color: hintTxt, fontSize: 20)),
+                    )
+                  : ListView.builder(
+                      itemCount: viewNotes.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: Slidable(
+                            endActionPane: ActionPane(motion: const StretchMotion(), children: [
+                              SlidableAction(
+                                autoClose: true,
+                                onPressed: (context) => {
+                                  setState(
+                                    () => onPined(index),
+                                  )
+                                },
+                                icon: Icons.push_pin_outlined,
+                                backgroundColor: bg,
+                              ),
+                              SlidableAction(
+                                autoClose: true,
+                                onPressed: (context) => deleteNote(index),
+                                icon: MyIcons.trash,
+                                backgroundColor: bg,
                               )
-                            },
-                            icon: Icons.push_pin_outlined,
-                            backgroundColor: bg,
+                            ]),
+                            child: GestureDetector(
+                                onTap: () => Navigator.pushNamed(context, '/createNote', arguments: {'key': viewNotes[index]['key'], 'pinPressed': () => onPined(index)}),
+                                child: NoteCard(
+                                  title: viewNotes[index]['title'],
+                                  desc: viewNotes[index]['desc'],
+                                  date: viewNotes[index]['date'],
+                                  tag: viewNotes[index]['tag'],
+                                  pined: viewNotes[index]['pined'],
+                                )),
                           ),
-                          SlidableAction(
-                            autoClose: true,
-                            onPressed: (context) => deleteNote(index),
-                            icon: MyIcons.trash,
-                            backgroundColor: bg,
-                          )
-                        ]),
-                        child: GestureDetector(
-                            onTap: () => Navigator.pushNamed(context, '/createNote', arguments: {'key': viewNotes[index]['key'], 'pinPressed': () => onPined(index)}),
-                            child: NoteCard(
-                              title: viewNotes[index]['title'],
-                              desc: viewNotes[index]['desc'],
-                              date: viewNotes[index]['date'],
-                              tag: viewNotes[index]['tag'],
-                              pined: viewNotes[index]['pined'],
-                            )),
-                      ),
-                    );
-                  }),
+                        );
+                      }),
             )
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: brand,
-          foregroundColor: shadowDark,
-          splashColor: shadowDark,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+        bottomNavigationBar: SizedBox(
+          height: 80,
+          child: Center(
+            child: NeomorphismButton(
+              action: () => Navigator.pushNamed(context, '/createNote'),
+              height: 40,
+              width: 40,
+              child: const Icon(Icons.add, color: brand),
+            ),
           ),
-          child: const Icon(Icons.add_outlined),
-          onPressed: () {
-            Navigator.pushNamed(context, '/createNote');
-          },
         ),
       ),
     );

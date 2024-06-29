@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 
 class NeomorphismButton extends StatefulWidget {
@@ -26,12 +27,12 @@ class _NeomorphismButtonState extends State<NeomorphismButton> {
         setState(() {
           _offset = 0;
         });
-        widget.action();
       },
       onTapUp: (details) {
         setState(() {
           _offset = 5;
         });
+        Future.delayed(const Duration(milliseconds: 100), widget.action);
       },
       onTapCancel: () {
         setState(() {
@@ -44,18 +45,51 @@ class _NeomorphismButtonState extends State<NeomorphismButton> {
         height: widget.height,
         padding: const EdgeInsets.all(0),
         margin: const EdgeInsets.all(0),
-        decoration: BoxDecoration(color: bg, border: Border.all(color: shadowLight, width: 1), borderRadius: BorderRadius.circular(10), boxShadow: [
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 5,
-            offset: Offset(_offset, _offset),
-          ),
-          BoxShadow(
-            color: shadowLight,
-            blurRadius: 5,
-            offset: Offset(-_offset, -_offset),
-          )
-        ]),
+        decoration: widget.width == widget.height
+            ? BoxDecoration(
+                gradient: const LinearGradient(colors: [
+                  Color(0xff24262b),
+                  Color(0xff36383d)
+                ], stops: [
+                  0.4,
+                  1,
+                ], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                borderRadius: BorderRadius.circular(10),
+                color: bg,
+                boxShadow: [
+                    BoxShadow(
+                      color: shadowDark,
+                      blurRadius: 5,
+                      offset: Offset(_offset, _offset),
+                    ),
+                    BoxShadow(
+                      color: shadowLight,
+                      blurRadius: 5,
+                      offset: Offset(-_offset, -_offset),
+                    ),
+                  ])
+            : BoxDecoration(
+                gradient: const LinearGradient(colors: [
+                  Color(0xff24262b),
+                  Color(0xff36383d)
+                ], stops: [
+                  0.2,
+                  1,
+                ], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                color: bg,
+                /*border: Border.all(color: shadowLight, width: 1),*/ borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                    BoxShadow(
+                      color: shadowDark,
+                      blurRadius: 5,
+                      offset: Offset(_offset, _offset),
+                    ),
+                    BoxShadow(
+                      color: shadowLight,
+                      blurRadius: 5,
+                      offset: Offset(-_offset, -_offset),
+                    )
+                  ]),
         child: Center(
           child: widget.child,
         ),

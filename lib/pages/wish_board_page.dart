@@ -7,6 +7,7 @@ import 'package:flutter_tests/data/wish_board_items.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 import 'package:flutter_tests/widgets/del_container.dart';
 import 'package:flutter_tests/widgets/my_appbar.dart';
+import 'package:flutter_tests/widgets/neomorphism_button.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -102,78 +103,92 @@ class _WishBoardPageState extends State<WishBoardPage> {
         builder: (context) => StatefulBuilder(
             builder: (context, setDialogState) => AlertDialog(
                   actionsPadding: const EdgeInsets.all(0),
-                  insetPadding: const EdgeInsets.only(top: 10, bottom: 300, left: 20, right: 20),
+                  // insetPadding: const EdgeInsets.only(top: 10, bottom: 300, left: 20, right: 20),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   contentPadding: const EdgeInsets.all(0),
                   contentTextStyle: const TextStyle(color: txt),
                   backgroundColor: bg,
                   elevation: 0,
-                  content: Column(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 20, right: 20, bottom: 40, left: 20),
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.all(Radius.circular(10)), boxShadow: [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 5), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 5)]),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(imgSelectPath.length > 20 ? '${imgSelectPath.substring(0, 20)}...' : imgSelectPath),
-                            IconButton(
-                              padding: const EdgeInsets.all(0),
-                              color: shadowDark,
-                              onPressed: () => _pickImage(setDialogState),
-                              icon: const Icon(
-                                Icons.image,
-                                color: txt,
-                              ),
-                            ),
-                          ],
+                  content: SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 20, right: 20, bottom: 40, left: 20),
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: const BoxDecoration(
+                              gradient: LinearGradient(colors: [
+                                Color(0xff24262b),
+                                Color(0xff36383d)
+                              ], stops: [
+                                0.4,
+                                1,
+                              ], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                              /*color: bg,*/ borderRadius: BorderRadius.all(Radius.circular(10)),
+                              boxShadow: [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 5), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 5)]),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(imgSelectPath.length > 20 ? '${imgSelectPath.substring(0, 30)}...' : imgSelectPath),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: NeomorphismButton(
+                                  action: () => _pickImage(setDialogState),
+                                  height: 35,
+                                  width: 35,
+                                  child: const Icon(
+                                    Icons.image_outlined,
+                                    color: txt,
+                                    size: 16,
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 20),
-                        decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)), boxShadow: [BoxShadow(color: shadowLight, offset: Offset(0, -5), blurRadius: 5)]),
-                        child: TextField(
-                          controller: textVisible,
-                          style: const TextStyle(color: txt),
-                          maxLines: 10,
-                          decoration: const InputDecoration(hintText: 'Write your goals, dreams, visible :)'),
-                        ),
-                      )
-                    ],
+                        Container(
+                          padding: const EdgeInsets.only(top: 20),
+                          decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)), boxShadow: [BoxShadow(color: shadowLight, offset: Offset(0, -5), blurRadius: 5)]),
+                          child: TextField(
+                            controller: textVisible,
+                            style: const TextStyle(color: txt),
+                            maxLines: 10,
+                            decoration: const InputDecoration(hintText: 'Write your goals, dreams, visible :)'),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   actions: [
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextButton(
-                        onPressed: saveVisible,
-                        style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                        child: const Text(
-                          'Save',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: brand,
+                        padding: const EdgeInsets.only(right: 20, bottom: 20),
+                        child: NeomorphismButton(
+                          action: saveVisible,
+                          height: 40,
+                          width: 80,
+                          child: const Text(
+                            'Save',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: brand,
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
+                        )),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextButton(
-                        onPressed: () {
+                      padding: const EdgeInsets.only(right: 20, bottom: 20),
+                      child: NeomorphismButton(
+                        action: () {
                           Navigator.pop(context);
                           setState(() {
                             imgSelectPath = '...';
                             textVisible.text = '';
                           });
                         },
-                        style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(fontSize: 20, color: txt),
-                        ),
+                        height: 40,
+                        width: 80,
+                        child: const Text('Cancel', style: TextStyle(color: txt, fontSize: 18)),
                       ),
-                    ),
+                    )
                   ],
                 )));
   }
@@ -246,9 +261,13 @@ class _WishBoardPageState extends State<WishBoardPage> {
                         ),
                         TextButton(
                             onPressed: Navigator.of(context).pop,
-                            child: const Text(
-                              'Close',
-                              style: TextStyle(color: hintTxt, fontSize: 18),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                              decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.all(Radius.circular(20))),
+                              child: const Text(
+                                'Close',
+                                style: TextStyle(color: txt, fontSize: 18),
+                              ),
                             )),
                       ],
                     ),
@@ -278,12 +297,15 @@ class _WishBoardPageState extends State<WishBoardPage> {
                 );
               }),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: showDialogWishboard,
-        backgroundColor: brand,
-        child: const Icon(
-          Icons.add,
-          color: shadowDark,
+      bottomNavigationBar: SizedBox(
+        height: 80,
+        child: Center(
+          child: NeomorphismButton(
+            action: showDialogWishboard,
+            height: 40,
+            width: 40,
+            child: const Icon(Icons.add, color: brand),
+          ),
         ),
       ),
     );

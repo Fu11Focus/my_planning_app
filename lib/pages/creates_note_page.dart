@@ -27,8 +27,8 @@ class _CreateNotePageState extends State<CreateNotePage> {
   late bool firstBuild;
   late int keyNote;
   late bool pined;
-    final _myBox = Hive.box('MyBox');
-    AllNotes dbNotes = AllNotes();
+  final _myBox = Hive.box('MyBox');
+  AllNotes dbNotes = AllNotes();
   @override
   void initState() {
     super.initState();
@@ -154,192 +154,192 @@ class _CreateNotePageState extends State<CreateNotePage> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-        body: GestureDetector(
-          onVerticalDragUpdate: (details) {
-            if (details.delta.dy > 0) {
-              FocusScope.of(context).unfocus();
-            }
-          },
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.width * 0.15,
-                  left: 20,
-                  right: 20,
-                  bottom: 0,
+          body: GestureDetector(
+            onVerticalDragUpdate: (details) {
+              if (details.delta.dy > 0) {
+                FocusScope.of(context).unfocus();
+              }
+            },
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.width * 0.15,
+                    left: 20,
+                    right: 20,
+                    bottom: 0,
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/notes');
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Close',
+                          style: TextStyle(color: brand, fontSize: 24),
+                        ),
+                        Icon(
+                          Icons.close,
+                          color: brand,
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/notes');
-                  },
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Close',
-                        style: TextStyle(color: brand, fontSize: 24),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: const BoxDecoration(
+                    color: bg,
+                    boxShadow: [
+                      BoxShadow(
+                        color: shadowDark,
+                        offset: Offset(5, 5),
+                        blurRadius: 5,
                       ),
-                      Icon(
-                        Icons.close,
-                        color: brand,
+                      BoxShadow(
+                        color: shadowLight,
+                        offset: Offset(-5, -5),
+                        blurRadius: 5,
+                      ),
+                    ],
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                  ),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _title,
+                        onChanged: (value) => setState(() {
+                          titleNotEmpty = value.isNotEmpty;
+                        }),
+                        style: const TextStyle(color: txt, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(0),
+                          focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: titleNotEmpty ? bg : Colors.red, width: 1)),
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: titleNotEmpty ? bg : Colors.red, width: 1)),
+                          hintText: 'New note',
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                MyIcons.tag_1,
+                                color: txt,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                height: 45,
+                                child: TextField(
+                                  controller: _tag,
+                                  onChanged: (value) => setState(() {
+                                    tagNotEmpty = value.isNotEmpty;
+                                  }),
+                                  style: const TextStyle(color: txt, letterSpacing: 1.5),
+                                  decoration: InputDecoration(
+                                    focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: tagNotEmpty ? bg : Colors.red, width: 1)),
+                                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: tagNotEmpty ? bg : Colors.red, width: 1)),
+                                    hintText: 'Tag for note',
+                                    contentPadding: const EdgeInsets.all(0),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.date_range_outlined,
+                                color: txt,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                note['date'],
+                                style: const TextStyle(color: txt, letterSpacing: 1.5),
+                              ),
+                            ],
+                          )
+                        ],
                       )
                     ],
                   ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: const BoxDecoration(
-                  color: bg,
-                  boxShadow: [
-                    BoxShadow(
-                      color: shadowDark,
-                      offset: Offset(5, 5),
-                      blurRadius: 5,
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 20),
+                    decoration: const BoxDecoration(
+                      color: bg,
+                      boxShadow: [BoxShadow(color: shadowLight, offset: Offset(0, -5), blurRadius: 5)],
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
                     ),
-                    BoxShadow(
-                      color: shadowLight,
-                      offset: Offset(-5, -5),
-                      blurRadius: 5,
+                    child: TextField(
+                      controller: _desc,
+                      enabled: true,
+                      style: const TextStyle(color: txt, letterSpacing: 1.5),
+                      maxLines: null,
+                      decoration: const InputDecoration(hintText: 'Write anything...'),
                     ),
-                  ],
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                ),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _title,
-                      onChanged: (value) => setState(() {
-                        titleNotEmpty = value.isNotEmpty;
-                      }),
-                      style: const TextStyle(color: txt, fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 1.5),
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.all(0),
-                        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: titleNotEmpty ? bg : Colors.red, width: 1)),
-                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: titleNotEmpty ? bg : Colors.red, width: 1)),
-                        hintText: 'New note',
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              MyIcons.tag_1,
-                              color: txt,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              height: 45,
-                              child: TextField(
-                                controller: _tag,
-                                onChanged: (value) => setState(() {
-                                  tagNotEmpty = value.isNotEmpty;
-                                }),
-                                style: const TextStyle(color: txt, letterSpacing: 1.5),
-                                decoration: InputDecoration(
-                                  focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: tagNotEmpty ? bg : Colors.red, width: 1)),
-                                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: tagNotEmpty ? bg : Colors.red, width: 1)),
-                                  hintText: 'Tag for note',
-                                  contentPadding: const EdgeInsets.all(0),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.date_range_outlined,
-                              color: txt,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              note['date'],
-                              style: const TextStyle(color: txt, letterSpacing: 1.5),
-                            ),
-                          ],
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.only(top: 20),
-                  decoration: const BoxDecoration(
-                    color: bg,
-                    boxShadow: [BoxShadow(color: shadowLight, offset: Offset(0, -5), blurRadius: 5)],
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                  ),
-                  child: TextField(
-                    controller: _desc,
-                    enabled: true,
-                    style: const TextStyle(color: txt, letterSpacing: 1.5),
-                    maxLines: null,
-                    decoration: const InputDecoration(hintText: 'Write anything...'),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        persistentFooterButtons: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              NeomorphismButton(
-                height: 60,
-                width: 60,
-                action: () => onSave(),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.save_alt_outlined,
-                      color: brand,
-                    ),
-                    Text(
-                      'Save',
-                      style: TextStyle(color: brand, letterSpacing: 1.5),
-                    )
-                  ],
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.only(bottom: 40),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                NeomorphismButton(
+                  height: 60,
+                  width: 60,
+                  action: () => onSave(),
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.save_alt_outlined,
+                        color: brand,
+                      ),
+                      Text(
+                        'Save',
+                        style: TextStyle(color: brand, letterSpacing: 1.5),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              NeomorphismButton(
-                height: 60,
-                width: 60,
-                action: () => deleteNote(keyNote),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      MyIcons.trash,
-                      color: brand,
-                    ),
-                    Text(
-                      'Delete',
-                      style: TextStyle(color: brand, letterSpacing: 1.5),
-                    )
-                  ],
+                NeomorphismButton(
+                  height: 60,
+                  width: 60,
+                  action: () => deleteNote(keyNote),
+                  child: const Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        MyIcons.trash,
+                        color: brand,
+                      ),
+                      Text(
+                        'Delete',
+                        style: TextStyle(color: brand, letterSpacing: 1.5),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          )
-        ],
-      ),
+              ],
+            ),
+          )),
     );
   }
 }

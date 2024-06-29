@@ -11,6 +11,8 @@ import 'package:flutter_tests/widgets/week_day_button.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
+import '../widgets/neomorphism_button.dart';
+
 class HabitsTracker extends StatefulWidget {
   const HabitsTracker({super.key});
 
@@ -395,79 +397,91 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                 style: TextStyle(color: hintTxt, fontSize: 20),
               ),
             )
-          : ListView.builder(
-              itemCount: habitsList.length,
-              itemBuilder: ((context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Slidable(
-                    endActionPane: ActionPane(motion: const StretchMotion(), children: [
-                      SlidableAction(
-                        autoClose: true,
-                        onPressed: (context) => {
-                          setState(() {
-                            dbHabits.removeHabit(index);
-                            habitsList = dbHabits.habbitsList;
-                          })
-                        },
-                        icon: MyIcons.trash,
-                        backgroundColor: bg,
-                      ),
-                    ]),
-                    child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(12), border: Border.all(color: shadowLight), boxShadow: const [BoxShadow(color: shadowDark, offset: Offset(10, 10), blurRadius: 10), BoxShadow(color: shadowDark, offset: Offset(-10, 10), blurRadius: 10)]),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  habitsList[index]['title'].length > 25 ? '${habitsList[index]['title'].substring(0, 25)}...' : habitsList[index]['title'],
-                                  style: TextStyle(color: txt, fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.start,
-                                ),
-                                Divider(
-                                  height: 10,
-                                  color: bg,
-                                ),
-                                Text(
-                                  '${habitsList[index]['daysOfWeek'].contains('Sun') ? 'Sun ' : ''}${habitsList[index]['daysOfWeek'].contains('Mon') ? 'Mon ' : ''}${habitsList[index]['daysOfWeek'].contains('Tue') ? 'Tue ' : ''}${habitsList[index]['daysOfWeek'].contains('Wed') ? 'Wed ' : ''}${habitsList[index]['daysOfWeek'].contains('Thu') ? 'Thu ' : ''}${habitsList[index]['daysOfWeek'].contains('Fri') ? 'Fri ' : ''}${habitsList[index]['daysOfWeek'].contains('Sat') ? 'Sat' : ''}',
-                                  style: TextStyle(
-                                    color: txt,
+          : Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: ListView.builder(
+                itemCount: habitsList.length,
+                itemBuilder: ((context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Slidable(
+                      endActionPane: ActionPane(motion: const StretchMotion(), children: [
+                        SlidableAction(
+                          autoClose: true,
+                          onPressed: (context) => {
+                            setState(() {
+                              dbHabits.removeHabit(index);
+                              habitsList = dbHabits.habbitsList;
+                            })
+                          },
+                          icon: MyIcons.trash,
+                          backgroundColor: bg,
+                        ),
+                      ]),
+                      child: Container(
+                          padding: const EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                              gradient: const LinearGradient(colors: [
+                                Color(0xff24262b),
+                                Color(0xff36383d)
+                              ], stops: [
+                                0.4,
+                                1,
+                              ], begin: Alignment.topLeft, end: Alignment.bottomRight, transform: GradientRotation(0.9)),
+                              borderRadius: BorderRadius.circular(12),
+                              /*border: Border.all(color: shadowLight),*/ boxShadow: const [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 10), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 10)]),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    habitsList[index]['title'].length > 25 ? '${habitsList[index]['title'].substring(0, 25)}...' : habitsList[index]['title'],
+                                    style: TextStyle(color: txt, fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.start,
                                   ),
-                                ),
-                                Divider(
-                                  height: 10,
-                                  color: bg,
-                                ),
-                                Text('${DateFormat('dd.MM.yyyy').format(habitsList[index]['start'])} - ${DateFormat('dd.MM.yyyy').format(habitsList[index]['finish'])}', style: TextStyle(color: txt)),
-                              ],
-                            ),
-                            Text(
-                              'Progress:\n${calculateHabitProgress(habitsList[index])}%',
-                              style: TextStyle(
-                                color: txt,
+                                  Divider(
+                                    height: 10,
+                                    color: bg,
+                                  ),
+                                  Text(
+                                    '${habitsList[index]['daysOfWeek'].contains('Sun') ? 'Sun ' : ''}${habitsList[index]['daysOfWeek'].contains('Mon') ? 'Mon ' : ''}${habitsList[index]['daysOfWeek'].contains('Tue') ? 'Tue ' : ''}${habitsList[index]['daysOfWeek'].contains('Wed') ? 'Wed ' : ''}${habitsList[index]['daysOfWeek'].contains('Thu') ? 'Thu ' : ''}${habitsList[index]['daysOfWeek'].contains('Fri') ? 'Fri ' : ''}${habitsList[index]['daysOfWeek'].contains('Sat') ? 'Sat' : ''}',
+                                    style: TextStyle(
+                                      color: txt,
+                                    ),
+                                  ),
+                                  Divider(
+                                    height: 10,
+                                    color: bg,
+                                  ),
+                                  Text('${DateFormat('dd.MM.yyyy').format(habitsList[index]['start'])} - ${DateFormat('dd.MM.yyyy').format(habitsList[index]['finish'])}', style: TextStyle(color: txt)),
+                                ],
                               ),
-                            ),
-                          ],
-                        )),
-                  ),
-                );
-              }),
+                              Text(
+                                'Progress:\n${calculateHabitProgress(habitsList[index])}%',
+                                style: TextStyle(
+                                  color: txt,
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
+                  );
+                }),
+              ),
             ),
-      floatingActionButton: FloatingActionButton.small(
-        onPressed: () => createHabitDialog(daysOfWeekHabit: daysOfWeek),
-        backgroundColor: brand,
-        foregroundColor: shadowDark,
-        child: const Icon(
-          Icons.add,
-          color: bg,
-          size: 20,
+      bottomNavigationBar: SizedBox(
+        height: 80,
+        child: Center(
+          child: NeomorphismButton(
+            action: () => createHabitDialog(daysOfWeekHabit: daysOfWeek),
+            height: 40,
+            width: 40,
+            child: const Icon(Icons.add, color: brand),
+          ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

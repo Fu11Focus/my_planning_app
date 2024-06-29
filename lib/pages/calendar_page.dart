@@ -6,6 +6,7 @@ import 'package:flutter_tests/data/habits.dart';
 import 'package:flutter_tests/data/todo_list.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 import 'package:flutter_tests/widgets/my_appbar.dart';
+import 'package:flutter_tests/widgets/neomorphism_button.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
 import 'package:flutter_tests/widgets/calendar_picker.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -301,16 +302,17 @@ class _CalendarState extends State<Calendar> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton.small(
-        onPressed: _addTodoDialog,
-        backgroundColor: brand,
-        child: const Icon(
-          Icons.add,
-          color: shadowDark,
-          size: 16,
+      bottomNavigationBar: SizedBox(
+        height: 80,
+        child: Center(
+          child: NeomorphismButton(
+            action: _addTodoDialog,
+            height: 40,
+            width: 40,
+            child: const Icon(Icons.add, color: brand),
+          ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
     );
   }
 }

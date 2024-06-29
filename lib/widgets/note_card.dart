@@ -25,21 +25,30 @@ class NoteCard extends StatelessWidget {
       child: Container(
         height: 135,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-            color: bg,
-            border: Border.all(
+        decoration: const BoxDecoration(
+            // color: bg,
+            gradient: LinearGradient(colors: [
+              Color(0xff24262b),
+              bg,
+              Color(0xff36383d)
+            ], stops: [
+              0.2,
+              0.5,
+              1,
+            ], transform: GradientRotation(0.9), begin: Alignment.topLeft, end: Alignment.bottomRight),
+            /* border: Border.all(
               color: shadowLight,
-            ),
-            borderRadius: const BorderRadius.all(Radius.circular(15)),
-            boxShadow: const [
-              BoxShadow(
-                color: shadowDark,
-                offset: Offset(-5, 5),
-                blurRadius: 10,
-              ),
+            ),*/
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+            boxShadow: [
               BoxShadow(
                 color: shadowDark,
                 offset: Offset(5, 5),
+                blurRadius: 10,
+              ),
+              BoxShadow(
+                color: shadowLight,
+                offset: Offset(-5, -5),
                 blurRadius: 10,
               )
             ]),
@@ -51,7 +60,7 @@ class NoteCard extends StatelessWidget {
                 title,
                 style: const TextStyle(color: txt, fontWeight: FontWeight.bold, letterSpacing: 1.5),
               ),
-              Icon(Icons.push_pin_outlined, color: pined ? hintTxt : bg),
+              Icon(Icons.push_pin_outlined, color: pined ? hintTxt : Colors.transparent),
             ],
           ),
           Text(
