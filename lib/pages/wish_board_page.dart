@@ -119,11 +119,13 @@ class _WishBoardPageState extends State<WishBoardPage> {
                           decoration: const BoxDecoration(
                               gradient: LinearGradient(colors: [
                                 Color(0xff24262b),
+                                bg,
                                 Color(0xff36383d)
                               ], stops: [
                                 0.4,
+                                0.6,
                                 1,
-                              ], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                              ], begin: Alignment.topLeft, end: Alignment.bottomRight, transform: GradientRotation(0.95)),
                               /*color: bg,*/ borderRadius: BorderRadius.all(Radius.circular(10)),
                               boxShadow: [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 5), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 5)]),
                           child: Row(

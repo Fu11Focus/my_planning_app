@@ -72,33 +72,29 @@ class _InboxState extends State<Inbox> {
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                onPressed: () {
+              padding: const EdgeInsets.only(right: 20, bottom: 20, top: 20),
+              child: NeomorphismButton(
+                action: () {
                   inboxDB.addNewItem(newTaskController.text);
                   setState(() {
                     newTaskController.clear();
                   });
                   Navigator.pop(context);
                 },
-                style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                child: const Text(
-                  'Add',
-                  style: TextStyle(color: brand, fontSize: 20),
-                ),
+                height: 40,
+                width: 80,
+                child: const Text('Add', style: TextStyle(color: txt, fontSize: 18)),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                onPressed: Navigator.of(context).pop,
-                style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: txt, fontSize: 20),
-                ),
+              padding: const EdgeInsets.only(right: 20, bottom: 20, top: 20),
+              child: NeomorphismButton(
+                action: Navigator.of(context).pop,
+                height: 40,
+                width: 80,
+                child: const Text('Cancel', style: TextStyle(color: txt, fontSize: 18)),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -269,7 +265,11 @@ class _InboxState extends State<Inbox> {
                                 //   1,
                                 // ], begin: Alignment.topLeft, end: Alignment.bottomRight, transform: GradientRotation(0.9)),
                               ),
-                              child: Text(inboxDB.inboxList[index]['title'], style: TextStyle(color: txt, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                              child: Text('${index + 1}. ${inboxDB.inboxList[index]['title']}',
+                                  style: TextStyle(
+                                    color: txt,
+                                    fontSize: 16,
+                                  )),
                             )),
                       ))),
             ),

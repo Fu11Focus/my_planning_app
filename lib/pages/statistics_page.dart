@@ -8,9 +8,10 @@ class Statistics extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      endDrawer: RightMenu(thisPage: 'Statistics'),
-      appBar: MyAppBar(icon: Icons.airline_stops, text: 'Statistics'),
-      body: Center(child: Text('Check ur results.')),
-    );
+        endDrawer: RightMenu(thisPage: 'Dashboard'),
+        appBar: MyAppBar(icon: Icons.add_chart, text: 'Dashboard'),
+        body: Column(
+          children: [],
+        ));
   }
 }

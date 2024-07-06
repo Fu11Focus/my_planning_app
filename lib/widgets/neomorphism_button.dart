@@ -53,7 +53,7 @@ class _NeomorphismButtonState extends State<NeomorphismButton> {
                 ], stops: [
                   0.4,
                   1,
-                ], begin: Alignment.topLeft, end: Alignment.bottomRight),
+                ], begin: Alignment.topLeft, end: Alignment.bottomRight, transform: GradientRotation(0.7)),
                 borderRadius: BorderRadius.circular(10),
                 color: bg,
                 boxShadow: [

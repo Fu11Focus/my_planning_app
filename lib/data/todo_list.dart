@@ -23,6 +23,13 @@ class TodoList extends ChangeNotifier {
     _myBox.put('TODOLIST', todoList);
   }
 
+  void deleteToDoItem(id) {
+    int index = todoList.indexWhere((element) => element['id'] == id);
+    todoList.removeAt(index);
+    updateDataBase();
+    notifyListeners();
+  }
+
   void addTodoItem(String title, bool done, DateTime date) {
     todoList.add({'id': const Uuid().v4(), 'title': title, 'done': done, 'date': date});
     updateDataBase();

@@ -350,35 +350,34 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                     ),
                   ),
                   actions: [
-                    TextButton(
-                      onPressed: () => saveHabit(id: id),
-                      style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                      child: const Text(
-                        'Save',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: brand,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20, bottom: 0),
+                      child: NeomorphismButton(
+                        action: () => saveHabit(id: id),
+                        height: 40,
+                        width: 80,
+                        child: const Text('Save', style: TextStyle(color: txt, fontSize: 18)),
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        editNewHabitController.text = '';
-                        daysOfWeek = {
-                          'Sun': false,
-                          'Mon': false,
-                          'Tue': false,
-                          'Wed': false,
-                          'Thu': false,
-                          'Fri': false,
-                          'Sat': false,
-                        };
-                      },
-                      style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                      child: const Text(
-                        'Cancel',
-                        style: TextStyle(fontSize: 20, color: txt),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20, bottom: 0),
+                      child: NeomorphismButton(
+                        action: () {
+                          Navigator.pop(context);
+                          editNewHabitController.text = '';
+                          daysOfWeek = {
+                            'Sun': false,
+                            'Mon': false,
+                            'Tue': false,
+                            'Wed': false,
+                            'Thu': false,
+                            'Fri': false,
+                            'Sat': false,
+                          };
+                        },
+                        height: 40,
+                        width: 80,
+                        child: const Text('Cancel', style: TextStyle(color: txt, fontSize: 18)),
                       ),
                     ),
                   ],
