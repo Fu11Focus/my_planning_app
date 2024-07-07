@@ -6,6 +6,7 @@ import 'package:flutter_tests/data/habits.dart';
 import 'package:flutter_tests/my_icons_icons.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 import 'package:flutter_tests/widgets/my_appbar.dart';
+import 'package:flutter_tests/widgets/neo_container.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
 import 'package:flutter_tests/widgets/week_day_button.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -195,43 +196,34 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                   elevation: 0,
                   insetPadding: EdgeInsets.symmetric(horizontal: 10),
                   contentPadding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                  icon: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Icon(
-                        Icons.person_2_outlined,
-                        size: 22,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text('Add new habit', style: TextStyle(color: txt, fontSize: 18)),
-                    ],
-                  ),
-                  titleTextStyle: TextStyle(color: txt),
                   content: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
-                    height: 300,
+                    height: 350,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        TextField(
-                          controller: editNewHabitController,
-                          style: const TextStyle(color: txt),
-                          decoration: InputDecoration(
-                            hintText: 'Enter habit',
-                            contentPadding: EdgeInsets.all(0),
-                            fillColor: txt,
+                        Container(
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: Colors.transparent, boxShadow: const [BoxShadow(color: shadowDark), BoxShadow(color: bg, spreadRadius: -5, blurRadius: 5)]),
+                          child: TextField(
+                            controller: editNewHabitController,
+                            style: const TextStyle(color: txt),
+                            decoration: InputDecoration(
+                              hintText: 'Enter habit',
+                              contentPadding: EdgeInsets.all(10),
+                              fillColor: txt,
+                            ),
                           ),
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Select day for repeat:',
-                              style: TextStyle(color: txt),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                'Select day for repeat:',
+                                style: TextStyle(color: txt),
+                              ),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -292,57 +284,74 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Start date:',
-                              style: TextStyle(color: txt),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10),
+                              child: Text(
+                                'Start date:',
+                                style: TextStyle(color: txt),
+                              ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 40),
-                                  child: Text(
-                                    DateFormat('dd.MM.yyyy').format(startNewHabit),
-                                    style: TextStyle(color: txt),
-                                  ),
+                            NeoContainer(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 40),
+                                      child: Text(
+                                        DateFormat('dd.MM.yyyy').format(startNewHabit),
+                                        style: TextStyle(color: txt),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      child: NeomorphismButton(
+                                        action: () => _selectStartDate(setState),
+                                        height: 30,
+                                        width: 100,
+                                        child: Text('Select date',
+                                            style: TextStyle(
+                                              color: txt,
+                                            )),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                TextButton(
-                                  onPressed: () => _selectStartDate(setState),
-                                  style: const ButtonStyle(
-                                    backgroundColor: MaterialStatePropertyAll(shadowDark),
-                                  ),
-                                  child: const Text('Select date',
-                                      style: TextStyle(
-                                        color: txt,
-                                      )),
-                                )
-                              ],
+                              ),
                             ),
                             Text(
                               'Finish date:',
                               style: TextStyle(color: txt),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 40),
-                                  child: Text(
-                                    DateFormat('dd.MM.yyyy').format(finishNewHabit),
-                                    style: TextStyle(color: txt),
-                                  ),
+                            NeoContainer(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 40),
+                                      child: Text(
+                                        DateFormat('dd.MM.yyyy').format(finishNewHabit),
+                                        style: TextStyle(color: txt),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      child: NeomorphismButton(
+                                        action: () => _selectFinishDate(setState),
+                                        height: 30,
+                                        width: 100,
+                                        child: Text('Select date',
+                                            style: TextStyle(
+                                              color: txt,
+                                            )),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                TextButton(
-                                  onPressed: () => _selectFinishDate(setState),
-                                  style: const ButtonStyle(
-                                    backgroundColor: MaterialStatePropertyAll(shadowDark),
-                                  ),
-                                  child: const Text('Select date',
-                                      style: TextStyle(
-                                        color: txt,
-                                      )),
-                                )
-                              ],
+                              ),
                             ),
                           ],
                         )
@@ -387,8 +396,8 @@ class _HabitsTrackerState extends State<HabitsTracker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: const RightMenu(thisPage: 'Habbits Tracker'),
-      appBar: const MyAppBar(icon: Icons.task_alt_sharp, text: 'Habbits Tracker'),
+      endDrawer: const RightMenu(thisPage: 'Habits'),
+      appBar: const MyAppBar(icon: Icons.task_alt_sharp, text: 'Habits'),
       body: habitsList.isEmpty
           ? Center(
               child: Text(

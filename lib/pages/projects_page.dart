@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 import 'package:flutter_tests/widgets/my_appbar.dart';
 import 'package:flutter_tests/widgets/right_menu.dart';
-import 'package:flutter_tests/widgets/sprint_card.dart';
 
 class Projects extends StatelessWidget {
   const Projects({super.key});

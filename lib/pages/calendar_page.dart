@@ -73,30 +73,33 @@ class _CalendarState extends State<Calendar> {
                 backgroundColor: bg,
               )
             ]),
-            child: NeoContainer(
-              child: Theme(
-                data: ThemeData(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                ),
-                child: CheckboxListTile(
-                  checkColor: brand,
-                  controlAffinity: ListTileControlAffinity.leading,
-                  title: Text(
-                    e['title'],
-                    style: TextStyle(
-                      color: e['done'] ? hintTxt : txt,
-                      decoration: e['done'] ? TextDecoration.lineThrough : TextDecoration.none,
-                      decorationColor: hintTxt,
-                    ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: NeoContainer(
+                child: Theme(
+                  data: ThemeData(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
                   ),
-                  value: e['done'],
-                  onChanged: (checked) {
-                    _toggleTodoStatus(e['id'], checked);
-                  },
-                  subtitle: Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
-                  // overlayColor: const MaterialStatePropertyAll(brand),
-                  fillColor: const MaterialStatePropertyAll(shadowDark),
+                  child: CheckboxListTile(
+                    checkColor: brand,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(
+                      e['title'],
+                      style: TextStyle(
+                        color: e['done'] ? hintTxt : txt,
+                        decoration: e['done'] ? TextDecoration.lineThrough : TextDecoration.none,
+                        decorationColor: hintTxt,
+                      ),
+                    ),
+                    value: e['done'],
+                    onChanged: (checked) {
+                      _toggleTodoStatus(e['id'], checked);
+                    },
+                    subtitle: Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
+                    // overlayColor: const MaterialStatePropertyAll(brand),
+                    fillColor: const MaterialStatePropertyAll(shadowDark),
+                  ),
                 ),
               ),
             ),
@@ -123,30 +126,33 @@ class _CalendarState extends State<Calendar> {
                   backgroundColor: bg,
                 )
               ]),
-              child: NeoContainer(
-                child: Theme(
-                  data: ThemeData(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                  ),
-                  child: CheckboxListTile(
-                    checkColor: brand,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(
-                      e['title'] + ' (${DateFormat('dd.MM.yyyy').format(e['date'])})',
-                      style: TextStyle(
-                        color: Colors.red[300],
-                        decoration: e['done'] ? TextDecoration.lineThrough : TextDecoration.none,
-                        decorationColor: hintTxt,
-                      ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: NeoContainer(
+                  child: Theme(
+                    data: ThemeData(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
                     ),
-                    value: e['done'],
-                    onChanged: (checked) {
-                      _toggleTodoStatus(e['id'], checked);
-                    },
-                    subtitle: Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
-                    // overlayColor: const MaterialStatePropertyAll(brand),
-                    fillColor: const MaterialStatePropertyAll(shadowDark),
+                    child: CheckboxListTile(
+                      checkColor: brand,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: Text(
+                        e['title'] + ' (${DateFormat('dd.MM.yyyy').format(e['date'])})',
+                        style: TextStyle(
+                          color: Colors.red[300],
+                          decoration: e['done'] ? TextDecoration.lineThrough : TextDecoration.none,
+                          decorationColor: hintTxt,
+                        ),
+                      ),
+                      value: e['done'],
+                      onChanged: (checked) {
+                        _toggleTodoStatus(e['id'], checked);
+                      },
+                      subtitle: Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
+                      // overlayColor: const MaterialStatePropertyAll(brand),
+                      fillColor: const MaterialStatePropertyAll(shadowDark),
+                    ),
                   ),
                 ),
               )),
@@ -157,88 +163,70 @@ class _CalendarState extends State<Calendar> {
     habitsDB.habbitsList.forEach((e) {
       if (e['progress'].containsKey(DateFormat('dd MMM yyyy').format(selectDate)) && DateFormat('dd MMM yyyy').format(selectDate) == DateFormat('dd MMM yyyy').format(DateTime.now())) {
         allTask.add(
-          Slidable(
-              endActionPane: ActionPane(motion: const StretchMotion(), children: [
-                SlidableAction(
-                  autoClose: true,
-                  onPressed: (context) => setState(() {
-                    todoDB.deleteToDoItem(e['id']);
-                    allTaskForToday = _getAllTaskForToday();
-                  }),
-                  icon: MyIcons.trash,
-                  backgroundColor: bg,
-                )
-              ]),
-              child: NeoContainer(
-                child: Theme(
-                  data: ThemeData(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                  ),
-                  child: CheckboxListTile(
-                    checkColor: brand,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(
-                      e['title'],
-                      style: TextStyle(
-                        color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt,
-                        decoration: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? TextDecoration.lineThrough : TextDecoration.none,
-                        decorationColor: hintTxt,
-                      ),
-                    ),
-                    value: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)],
-                    onChanged: (checked) {
-                      _toggleHabitStatus(e['id'], checked);
-                    },
-                    subtitle: Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
-                    // overlayColor: const MaterialStatePropertyAll(brand),
-                    fillColor: const MaterialStatePropertyAll(shadowDark),
-                  ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: NeoContainer(
+              child: Theme(
+                data: ThemeData(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                 ),
-              )),
+                child: CheckboxListTile(
+                  checkColor: brand,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: Text(
+                    e['title'],
+                    style: TextStyle(
+                      color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt,
+                      decoration: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? TextDecoration.lineThrough : TextDecoration.none,
+                      decorationColor: hintTxt,
+                    ),
+                  ),
+                  value: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)],
+                  onChanged: (checked) {
+                    _toggleHabitStatus(e['id'], checked);
+                  },
+                  subtitle: Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
+                  // overlayColor: const MaterialStatePropertyAll(brand),
+                  fillColor: const MaterialStatePropertyAll(shadowDark),
+                ),
+              ),
+            ),
+          ),
         );
       } else if (e['progress'].containsKey(DateFormat('dd MMM yyyy').format(selectDate))) {
         allTask.add(
-          Slidable(
-              endActionPane: ActionPane(motion: const StretchMotion(), children: [
-                SlidableAction(
-                  autoClose: true,
-                  onPressed: (context) => setState(() {
-                    todoDB.deleteToDoItem(e['id']);
-                    allTaskForToday = _getAllTaskForToday();
-                  }),
-                  icon: MyIcons.trash,
-                  backgroundColor: bg,
-                )
-              ]),
-              child: NeoContainer(
-                child: Theme(
-                  data: ThemeData(
-                    splashColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                  ),
-                  child: CheckboxListTile(
-                    checkColor: brand,
-                    controlAffinity: ListTileControlAffinity.leading,
-                    title: Text(
-                      e['title'],
-                      style: TextStyle(
-                        color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt,
-                        decoration: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? TextDecoration.lineThrough : TextDecoration.none,
-                        decorationColor: hintTxt,
-                      ),
-                    ),
-                    value: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)],
-                    onChanged: (checked) {
-                      final snackBar = SnackBar(content: Text('This day has not yet come!', style: TextStyle(color: Colors.red[300])));
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    },
-                    subtitle: Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
-                    // overlayColor: const MaterialStatePropertyAll(brand),
-                    fillColor: const MaterialStatePropertyAll(shadowDark),
-                  ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: NeoContainer(
+              child: Theme(
+                data: ThemeData(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                 ),
-              )),
+                child: CheckboxListTile(
+                  checkColor: brand,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: Text(
+                    e['title'],
+                    style: TextStyle(
+                      color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt,
+                      decoration: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? TextDecoration.lineThrough : TextDecoration.none,
+                      decorationColor: hintTxt,
+                    ),
+                  ),
+                  value: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)],
+                  onChanged: (checked) {
+                    final snackBar = SnackBar(content: Text('This day has not yet come!', style: TextStyle(color: Colors.red[300])));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  },
+                  subtitle: Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
+                  // overlayColor: const MaterialStatePropertyAll(brand),
+                  fillColor: const MaterialStatePropertyAll(shadowDark),
+                ),
+              ),
+            ),
+          ),
         );
       }
     });
@@ -302,37 +290,51 @@ class _CalendarState extends State<Calendar> {
           elevation: 0,
           content: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            height: 120,
+            height: 150,
             child: Column(children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: TextField(
-                  controller: newTaskController,
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter a task',
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  decoration: const BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(12)), color: Colors.transparent, boxShadow: [BoxShadow(color: shadowDark), BoxShadow(color: bg, spreadRadius: -5, blurRadius: 5)]),
+                  child: TextField(
+                    controller: newTaskController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter a task',
+                    ),
+                    style: const TextStyle(color: txt),
                   ),
-                  style: const TextStyle(color: txt),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 40),
-                    child: Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
-                  ),
-                  TextButton(
-                    onPressed: () => _selectDate(setDialogState),
-                    style: const ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(shadowDark),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: NeoContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 40),
+                          child: Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: NeomorphismButton(
+                            action: () => _selectDate(setDialogState),
+                            height: 30,
+                            width: 100,
+                            child: const Text('Select date',
+                                style: TextStyle(
+                                  color: txt,
+                                )),
+                          ),
+                        )
+                      ],
                     ),
-                    child: const Text('Select date',
-                        style: TextStyle(
-                          color: txt,
-                        )),
-                  )
-                ],
+                  ),
+                ),
               )
             ]),
           ),

@@ -49,6 +49,7 @@ class _InboxState extends State<Inbox> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
+          titleTextStyle: TextStyle(color: txt),
           actionsPadding: const EdgeInsets.all(0),
           insetPadding: const EdgeInsets.only(top: 10, bottom: 300, left: 20, right: 20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -60,13 +61,20 @@ class _InboxState extends State<Inbox> {
             width: MediaQuery.of(context).size.width * 0.8,
             child: Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: TextField(
-                controller: newTaskController,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Enter a task',
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(color: Colors.transparent, borderRadius: BorderRadius.circular(12), boxShadow: [
+                  BoxShadow(color: shadowDark),
+                  BoxShadow(color: bg, spreadRadius: -5, blurRadius: 5),
+                ]),
+                child: TextField(
+                  controller: newTaskController,
+                  autofocus: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter a task',
+                  ),
+                  style: const TextStyle(color: txt),
                 ),
-                style: const TextStyle(color: txt),
               ),
             ),
           ),

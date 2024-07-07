@@ -44,4 +44,6 @@ ThemeData mainTheme() => ThemeData(
       checkColor: MaterialStateProperty.all(brand),
     ),
     textSelectionTheme: const TextSelectionThemeData(selectionColor: brand, cursorColor: brand),
-    textTheme: const TextTheme());
+    textTheme: const TextTheme(
+        // bodyMedium: TextStyle(letterSpacing: 1.5),
+        ));

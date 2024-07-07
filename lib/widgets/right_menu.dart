@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_tests/util/color_palette.dart';
 
 class RightMenu extends StatelessWidget {
@@ -28,37 +29,52 @@ class RightMenu extends StatelessWidget {
     }
 
     return Container(
+      padding: const EdgeInsets.all(0),
       width: 300,
-      margin: const EdgeInsets.symmetric(vertical: 50.0),
+      height: 1000,
+      margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.12),
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          bottomLeft: Radius.circular(20),
+          topLeft: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
         ),
         boxShadow: [
           BoxShadow(
             color: shadowLight,
-            blurRadius: 18,
-            offset: Offset(-18, -18),
+            blurRadius: 5,
+            offset: Offset(-5, -5),
           ),
           BoxShadow(
             color: shadowDark,
-            blurRadius: 18,
-            offset: Offset(18, 18),
+            blurRadius: 5,
+            offset: Offset(5, 5),
           ),
         ],
         color: bg,
       ),
-      child: ListView(
-        children: <Widget>[
-          buildListTile(Icons.home, 'Whish Board', '/wishboard'),
-          buildListTile(Icons.task_sharp, 'Habbits Tracker', '/habbitsTracker'),
-          buildListTile(Icons.calendar_month, 'Calendar', '/calendar'),
-          buildListTile(Icons.inbox, 'Inbox', '/inbox'),
-          buildListTile(Icons.create_rounded, 'Notes', '/notes'),
-          // buildListTile(Icons.style, 'Projects', '/projects'),
-          buildListTile(Icons.add_chart_outlined, 'Dashboard', '/statistics'),
-          buildListTile(Icons.settings, 'Settings', '/settings'),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            height: 400,
+            child: ListView(
+              padding: const EdgeInsets.only(top: 20),
+              children: <Widget>[
+                buildListTile(Icons.sunny_snowing, 'Whish Board', '/wishboard'),
+                buildListTile(Icons.sports_basketball, 'Habits', '/habbitsTracker'),
+                buildListTile(Icons.calendar_month, 'Calendar', '/calendar'),
+                buildListTile(Icons.inbox, 'Inbox', '/inbox'),
+                buildListTile(Icons.create_rounded, 'Notes', '/notes'),
+                // buildListTile(Icons.style, 'Projects', '/projects'),
+                buildListTile(Icons.add_chart_outlined, 'Dashboard', '/statistics'),
+                buildListTile(Icons.settings, 'Settings', '/settings'),
+              ],
+            ),
+          ),
+          const Text(
+            'v1.0.0',
+            style: TextStyle(color: hintTxt),
+          ),
         ],
       ),
     );

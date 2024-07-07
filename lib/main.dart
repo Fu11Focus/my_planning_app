@@ -3,6 +3,7 @@ import 'package:flutter_tests/data/all_notes.dart';
 import 'package:flutter_tests/pages/calendar_page.dart';
 import 'package:flutter_tests/pages/creates_note_page.dart';
 import 'package:flutter_tests/pages/habbits_tracker_page.dart';
+import 'package:flutter_tests/pages/habit_dashboard.dart';
 import 'package:flutter_tests/pages/inbox_page.dart';
 import 'package:flutter_tests/pages/notes_page.dart';
 import 'package:flutter_tests/pages/project_create_page.dart';
@@ -41,10 +42,11 @@ class MyApp extends StatelessWidget {
         '/inbox': (context) => const Inbox(),
         '/notes': (context) => const Notes(),
         '/projects': (context) => const Projects(),
-        '/statistics': (context) => const Statistics(),
+        '/statistics': (context) => Statistics(),
         '/settings': (context) => const Settings(),
         '/createNote': (context) => const CreateNotePage(),
         '/projectCreate': (context) => const ProjectCreate(),
+        '/habitDashboard': (context) => HabitDashboard(),
       },
     );
   }
