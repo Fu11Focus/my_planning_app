@@ -3,15 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_calendar/flutter_advanced_calendar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_tests/data/habits.dart';
-import 'package:flutter_tests/data/todo_list.dart';
-import 'package:flutter_tests/my_icons_icons.dart';
-import 'package:flutter_tests/util/color_palette.dart';
-import 'package:flutter_tests/widgets/my_appbar.dart';
-import 'package:flutter_tests/widgets/neo_container.dart';
-import 'package:flutter_tests/widgets/neomorphism_button.dart';
-import 'package:flutter_tests/widgets/right_menu.dart';
-import 'package:flutter_tests/widgets/calendar_picker.dart';
+import 'package:ToDoDude/data/habits.dart';
+import 'package:ToDoDude/data/todo_list.dart';
+import 'package:ToDoDude/my_icons_icons.dart';
+import 'package:ToDoDude/util/color_palette.dart';
+import 'package:ToDoDude/widgets/my_appbar.dart';
+import 'package:ToDoDude/widgets/neo_container.dart';
+import 'package:ToDoDude/widgets/neomorphism_button.dart';
+import 'package:ToDoDude/widgets/right_menu.dart';
+import 'package:ToDoDude/widgets/calendar_picker.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 
@@ -282,14 +282,14 @@ class _CalendarState extends State<Calendar> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           actionsPadding: const EdgeInsets.all(0),
-          insetPadding: const EdgeInsets.only(top: 10, bottom: 300, left: 20, right: 20),
+          insetPadding: const EdgeInsets.only(top: 10, bottom: 10, left: 20, right: 20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           contentPadding: const EdgeInsets.all(0),
           contentTextStyle: const TextStyle(color: txt),
           backgroundColor: bg,
           elevation: 0,
           content: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
+            width: MediaQuery.of(context).size.width - 40,
             height: 150,
             child: Column(children: [
               Padding(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_tests/util/color_palette.dart';
+import 'package:ToDoDude/util/color_palette.dart';
 
 class NeomorphismButton extends StatefulWidget {
   final VoidCallback action;

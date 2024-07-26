@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tests/util/color_palette.dart';
-import 'package:flutter_tests/widgets/neomorphism_button.dart';
+import 'package:ToDoDude/util/color_palette.dart';
+import 'package:ToDoDude/widgets/neomorphism_button.dart';
 
 class ProjectCreate extends StatefulWidget {
   const ProjectCreate({super.key});

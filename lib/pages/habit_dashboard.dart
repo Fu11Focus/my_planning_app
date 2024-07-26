@@ -1,12 +1,10 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_tests/util/color_palette.dart';
-import 'package:flutter_tests/widgets/my_appbar.dart';
-import 'package:flutter_tests/widgets/neo_container.dart';
-import 'package:flutter_tests/widgets/right_menu.dart';
+import 'package:ToDoDude/util/color_palette.dart';
+import 'package:ToDoDude/widgets/my_appbar.dart';
+import 'package:ToDoDude/widgets/neo_container.dart';
+import 'package:ToDoDude/widgets/right_menu.dart';
 import 'package:intl/intl.dart';
 
 class HabitDashboard extends StatefulWidget {
@@ -24,11 +22,84 @@ class _HabitDashboardState extends State<HabitDashboard> {
     if (arguments != null) {
       habit = arguments['habit'];
     }
+
+//получаем кол-во выполненых дней
+    int getDaysIsDone() {
+      int days = 0;
+      habit['progress'].forEach((date, done) {
+        if (done) days++;
+      });
+      return days;
+    }
+
+//текущий стрик
+    int getStreakNow() {
+      int days = 0;
+
+      var newProgress = {};
+
+      habit['progress'].forEach((dateKey, progress) {
+        if (DateFormat("dd MMM yyyy").parse(dateKey).isAfter(DateTime.now())) {
+          return;
+        }
+        if (!newProgress.containsKey(dateKey)) {
+          newProgress[dateKey] = {};
+        }
+        newProgress[dateKey]![habit['title']] = progress;
+      });
+      List reversedProgress = newProgress.entries.toList().reversed.toList();
+      int donedTasksForStreakNow = 0;
+      for (var day in reversedProgress) {
+        day.value.forEach((title, done) {
+          if (done) donedTasksForStreakNow++;
+        });
+        if (day.value.length == donedTasksForStreakNow) {
+          days++;
+        } else {
+          break;
+        }
+        donedTasksForStreakNow = 0;
+      }
+      return days;
+    }
+
+    int getBestStreak() {
+      int days = 0;
+      int bestStreak = 0;
+
+      habit['progress'].forEach((title, done) {
+        if (done) {
+          days++;
+        } else {
+          if (days > bestStreak) {
+            bestStreak = days;
+          }
+          days = 0;
+        }
+      });
+
+      return bestStreak;
+    }
+
+    int calculateHabitProgress(Map habit) {
+      int totalDays = habit['progress'].length;
+      int completedDays = 0;
+
+      habit['progress'].forEach((date, value) {
+        if (value) {
+          completedDays++;
+        }
+      });
+
+      return (totalDays > 0 ? (completedDays / totalDays) * 100 : 0).round();
+    }
+
     return Scaffold(
         endDrawer: RightMenu(thisPage: 'Dashboard'),
         appBar: MyAppBar(icon: Icons.add_chart, text: 'Dashboard'),
         body: SingleChildScrollView(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 width: MediaQuery.of(context).size.width,
@@ -37,6 +108,7 @@ class _HabitDashboardState extends State<HabitDashboard> {
                     child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         habit['title'].toUpperCase(),
@@ -55,15 +127,16 @@ class _HabitDashboardState extends State<HabitDashboard> {
                     child: SizedBox(
                       width: (MediaQuery.of(context).size.width - 60) / 2,
                       height: 120,
-                      child: const NeoContainer(
+                      child: NeoContainer(
                         child: Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  AnimatedNumber(number: 43),
+                                  AnimatedNumber(number: calculateHabitProgress(habit)),
                                   Text(
                                     '%',
                                     style: TextStyle(color: hintTxt, fontSize: 16),
@@ -72,7 +145,7 @@ class _HabitDashboardState extends State<HabitDashboard> {
                                 ],
                               ),
                               Text(
-                                'Prossent',
+                                'Progress',
                                 style: TextStyle(color: hintTxt, fontSize: 16),
                                 textAlign: TextAlign.center,
                               )
@@ -88,21 +161,22 @@ class _HabitDashboardState extends State<HabitDashboard> {
                     child: SizedBox(
                       width: (MediaQuery.of(context).size.width - 60) / 2,
                       height: 120,
-                      child: const NeoContainer(
+                      child: NeoContainer(
                         child: Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  AnimatedNumber(number: 43),
+                                  AnimatedNumber(number: getDaysIsDone()),
                                   Text(
                                     '/ ',
                                     style: TextStyle(color: hintTxt, fontSize: 16),
                                     textAlign: TextAlign.center,
                                   ),
-                                  AnimatedNumber(number: 84),
+                                  AnimatedNumber(number: habit['progress'].length),
                                 ],
                               ),
                               Text(
@@ -126,12 +200,13 @@ class _HabitDashboardState extends State<HabitDashboard> {
                     child: SizedBox(
                       width: (MediaQuery.of(context).size.width - 60) / 2,
                       height: 120,
-                      child: const NeoContainer(
+                      child: NeoContainer(
                         child: Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              AnimatedNumber(number: 17),
+                              AnimatedNumber(number: getBestStreak()),
                               Text(
                                 'Best streak',
                                 style: TextStyle(color: hintTxt, fontSize: 16),
@@ -149,12 +224,13 @@ class _HabitDashboardState extends State<HabitDashboard> {
                     child: SizedBox(
                       width: (MediaQuery.of(context).size.width - 60) / 2,
                       height: 120,
-                      child: const NeoContainer(
+                      child: NeoContainer(
                         child: Padding(
                           padding: EdgeInsets.all(10.0),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              AnimatedNumber(number: 7),
+                              AnimatedNumber(number: getStreakNow()),
                               Text(
                                 'Streak',
                                 style: TextStyle(color: hintTxt, fontSize: 16),

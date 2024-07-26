@@ -3,10 +3,10 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_tests/data/all_notes.dart';
-import 'package:flutter_tests/my_icons_icons.dart';
-import 'package:flutter_tests/util/color_palette.dart';
-import 'package:flutter_tests/widgets/neomorphism_button.dart';
+import 'package:ToDoDude/data/all_notes.dart';
+import 'package:ToDoDude/my_icons_icons.dart';
+import 'package:ToDoDude/util/color_palette.dart';
+import 'package:ToDoDude/widgets/neomorphism_button.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 

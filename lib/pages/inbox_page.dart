@@ -2,15 +2,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_tests/data/inbox.dart';
-import 'package:flutter_tests/data/todo_list.dart';
-import 'package:flutter_tests/my_icons_icons.dart';
-import 'package:flutter_tests/util/color_palette.dart';
-import 'package:flutter_tests/widgets/my_appbar.dart';
-import 'package:flutter_tests/widgets/neomorphism_button.dart';
-import 'package:flutter_tests/widgets/right_menu.dart';
+import 'package:ToDoDude/data/inbox.dart';
+import 'package:ToDoDude/data/todo_list.dart';
+import 'package:ToDoDude/my_icons_icons.dart';
+import 'package:ToDoDude/util/color_palette.dart';
+import 'package:ToDoDude/widgets/my_appbar.dart';
+import 'package:ToDoDude/widgets/neomorphism_button.dart';
+import 'package:ToDoDude/widgets/right_menu.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+
+import '../widgets/neo_container.dart';
 
 class Inbox extends StatefulWidget {
   const Inbox({super.key});
@@ -97,7 +99,12 @@ class _InboxState extends State<Inbox> {
             Padding(
               padding: const EdgeInsets.only(right: 20, bottom: 20, top: 20),
               child: NeomorphismButton(
-                action: Navigator.of(context).pop,
+                action: () {
+                  setState(() {
+                    newTaskController.clear();
+                  });
+                  Navigator.pop(context);
+                },
                 height: 40,
                 width: 80,
                 child: const Text('Cancel', style: TextStyle(color: txt, fontSize: 18)),
@@ -154,46 +161,63 @@ class _InboxState extends State<Inbox> {
           elevation: 0,
           content: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            height: 120,
+            height: 150,
             child: Column(children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8),
-                child: TextField(
-                  readOnly: true,
-                  controller: newTaskController,
-                  autofocus: true,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter a task',
+                child: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(color: Colors.transparent, borderRadius: BorderRadius.circular(12), boxShadow: [
+                    BoxShadow(color: shadowDark),
+                    BoxShadow(color: bg, spreadRadius: -5, blurRadius: 5),
+                  ]),
+                  child: TextField(
+                    readOnly: true,
+                    controller: newTaskController,
+                    autofocus: true,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter a task',
+                    ),
+                    style: const TextStyle(color: txt),
                   ),
-                  style: const TextStyle(color: txt),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 40),
-                    child: Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
-                  ),
-                  TextButton(
-                    onPressed: () => _selectDate(setDialogState),
-                    style: const ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(shadowDark),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: NeoContainer(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 40),
+                          child: Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: NeomorphismButton(
+                            action: () => _selectDate(setDialogState),
+                            height: 30,
+                            width: 100,
+                            child: const Text('Select date',
+                                style: TextStyle(
+                                  color: txt,
+                                )),
+                          ),
+                        )
+                      ],
                     ),
-                    child: const Text('Select date',
-                        style: TextStyle(
-                          color: txt,
-                        )),
-                  )
-                ],
+                  ),
+                ),
               )
             ]),
           ),
           actions: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                onPressed: () {
+              padding: const EdgeInsets.only(right: 20, bottom: 20, top: 20),
+              child: NeomorphismButton(
+                action: () {
                   setState(() {
                     todoDB.addTodoItem(title, false, dateForNewTask);
                     inboxDB.inboxList.removeAt(inboxDB.inboxList.indexWhere((element) => element['id'] == id));
@@ -201,24 +225,25 @@ class _InboxState extends State<Inbox> {
                   });
                   Navigator.pop(context);
                 },
-                style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                child: const Text(
-                  'Add',
-                  style: TextStyle(color: brand, fontSize: 20),
-                ),
+                height: 40,
+                width: 80,
+                child: const Text('Add', style: TextStyle(color: txt, fontSize: 18)),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextButton(
-                onPressed: () => Navigator.pop(context),
-                style: ButtonStyle(overlayColor: MaterialStateProperty.all(Colors.transparent)),
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: txt, fontSize: 20),
-                ),
+              padding: const EdgeInsets.only(right: 20, bottom: 20, top: 20),
+              child: NeomorphismButton(
+                action: () {
+                  setState(() {
+                    newTaskController.clear();
+                  });
+                  Navigator.pop(context);
+                },
+                height: 40,
+                width: 80,
+                child: const Text('Cancel', style: TextStyle(color: txt, fontSize: 18)),
               ),
-            )
+            ),
           ],
         ),
       ),

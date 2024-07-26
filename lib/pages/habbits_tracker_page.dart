@@ -2,13 +2,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_tests/data/habits.dart';
-import 'package:flutter_tests/my_icons_icons.dart';
-import 'package:flutter_tests/util/color_palette.dart';
-import 'package:flutter_tests/widgets/my_appbar.dart';
-import 'package:flutter_tests/widgets/neo_container.dart';
-import 'package:flutter_tests/widgets/right_menu.dart';
-import 'package:flutter_tests/widgets/week_day_button.dart';
+import 'package:ToDoDude/data/habits.dart';
+import 'package:ToDoDude/my_icons_icons.dart';
+import 'package:ToDoDude/util/color_palette.dart';
+import 'package:ToDoDude/widgets/my_appbar.dart';
+import 'package:ToDoDude/widgets/neo_container.dart';
+import 'package:ToDoDude/widgets/right_menu.dart';
+import 'package:ToDoDude/widgets/week_day_button.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 

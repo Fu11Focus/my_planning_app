@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_tests/util/color_palette.dart';
+import 'package:ToDoDude/util/color_palette.dart';
 
 class RightMenu extends StatelessWidget {
   final String thisPage;
@@ -67,7 +67,7 @@ class RightMenu extends StatelessWidget {
                 buildListTile(Icons.create_rounded, 'Notes', '/notes'),
                 // buildListTile(Icons.style, 'Projects', '/projects'),
                 buildListTile(Icons.add_chart_outlined, 'Dashboard', '/statistics'),
-                buildListTile(Icons.settings, 'Settings', '/settings'),
+                // buildListTile(Icons.settings, 'Settings', '/settings'),
               ],
             ),
           ),

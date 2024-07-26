@@ -3,12 +3,12 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:flutter_tests/data/wish_board_items.dart';
-import 'package:flutter_tests/util/color_palette.dart';
-import 'package:flutter_tests/widgets/del_container.dart';
-import 'package:flutter_tests/widgets/my_appbar.dart';
-import 'package:flutter_tests/widgets/neomorphism_button.dart';
-import 'package:flutter_tests/widgets/right_menu.dart';
+import 'package:ToDoDude/data/wish_board_items.dart';
+import 'package:ToDoDude/util/color_palette.dart';
+import 'package:ToDoDude/widgets/del_container.dart';
+import 'package:ToDoDude/widgets/my_appbar.dart';
+import 'package:ToDoDude/widgets/neomorphism_button.dart';
+import 'package:ToDoDude/widgets/right_menu.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -131,7 +131,7 @@ class _WishBoardPageState extends State<WishBoardPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(imgSelectPath.length > 20 ? '${imgSelectPath.substring(0, 30)}...' : imgSelectPath),
+                              Text(imgSelectPath.length > 20 ? '${imgSelectPath.substring(0, 20)}...' : imgSelectPath),
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: NeomorphismButton(
@@ -149,6 +149,7 @@ class _WishBoardPageState extends State<WishBoardPage> {
                           ),
                         ),
                         Container(
+                          height: 100,
                           padding: const EdgeInsets.only(top: 20),
                           decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)), boxShadow: [BoxShadow(color: shadowLight, offset: Offset(0, -5), blurRadius: 5)]),
                           child: TextField(

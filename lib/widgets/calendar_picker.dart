@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_calendar/flutter_advanced_calendar.dart';
-import 'package:flutter_tests/util/color_palette.dart';
+import 'package:ToDoDude/util/color_palette.dart';
 
 class MyAdvencedCalendar extends StatefulWidget {
   final AdvancedCalendarController controller;

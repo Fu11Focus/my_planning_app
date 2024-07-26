@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tests/widgets/my_appbar.dart';
-import 'package:flutter_tests/widgets/right_menu.dart';
+import 'package:ToDoDude/widgets/my_appbar.dart';
+import 'package:ToDoDude/widgets/right_menu.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});

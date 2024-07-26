@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tests/util/color_palette.dart';
+import 'package:ToDoDude/util/color_palette.dart';
 
 class WeekDayButton extends StatefulWidget {
   final String dayOfWeek;

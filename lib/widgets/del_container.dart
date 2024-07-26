@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tests/my_icons_icons.dart';
-import 'package:flutter_tests/util/color_palette.dart';
+import 'package:ToDoDude/my_icons_icons.dart';
+import 'package:ToDoDude/util/color_palette.dart';
 
 class DelContainer extends StatelessWidget {
   final VoidCallback action;
