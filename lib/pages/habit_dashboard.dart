@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:ToDoDude/flutter_heatmap_calendar-main/lib/flutter_heatmap_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:ToDoDude/util/color_palette.dart';
 import 'package:ToDoDude/widgets/my_appbar.dart';
@@ -14,7 +15,7 @@ class HabitDashboard extends StatefulWidget {
 }
 
 class _HabitDashboardState extends State<HabitDashboard> {
-  late var habit;
+  Map habit = {};
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,6 @@ class _HabitDashboardState extends State<HabitDashboard> {
 //текущий стрик
     int getStreakNow() {
       int days = 0;
-
       var newProgress = {};
 
       habit['progress'].forEach((dateKey, progress) {
@@ -94,6 +94,23 @@ class _HabitDashboardState extends State<HabitDashboard> {
       return (totalDays > 0 ? (completedDays / totalDays) * 100 : 0).round();
     }
 
+    Map<DateTime, int> getDataSet() {
+      Map<DateTime, int> dataSet = {};
+      habit['progress'].entries.forEach((element) {
+        if (DateFormat('dd MMM yyyy').parse(element.key.toString()).isAfter(DateTime.now())) {
+          dataSet[DateFormat('dd MMM yyyy').parse(element.key)] = 2;
+        } else {
+          if (element.value) {
+            dataSet[DateFormat('dd MMM yyyy').parse(element.key)] = 3;
+          } else {
+            dataSet[DateFormat('dd MMM yyyy').parse(element.key)] = 0;
+          }
+        }
+      });
+
+      return dataSet;
+    }
+
     return Scaffold(
         endDrawer: RightMenu(thisPage: 'Dashboard'),
         appBar: MyAppBar(icon: Icons.add_chart, text: 'Dashboard'),
@@ -101,9 +118,46 @@ class _HabitDashboardState extends State<HabitDashboard> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Theme(
+                  data: ThemeData.dark(),
+                  child: SizedBox(
+                    height: 300,
+                    child: HeatMapCalendar(
+                      monthTextColor: txt,
+                      showColorTip: false,
+                      size: 35,
+                      fontSize: 12,
+                      borderRadius: 10,
+                      defaultColor: hintTxt,
+                      weekTextColor: hintTxt,
+                      textColor: bg,
+                      colorTipCount: 4,
+                      flexible: false,
+                      colorMode: ColorMode.color,
+                      datasets: getDataSet(),
+                      colorsets: const {
+                        0: Colors.redAccent, // невыполненый день
+                        1: hintTxt, //ничего делать не надо было
+                        2: txt, // будущие дни, которые только надо будет выполнить позже
+                        3: brand, //выполнено
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Divider(
+                  height: 2,
+                  color: shadowLight,
+                ),
+              ),
               Container(
                 width: MediaQuery.of(context).size.width,
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                margin: EdgeInsets.only(top: 10),
                 child: NeoContainer(
                     child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -123,7 +177,7 @@ class _HabitDashboardState extends State<HabitDashboard> {
                 children: [
                   //выполненный процент
                   Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.only(left: 20, top: 20),
                     child: SizedBox(
                       width: (MediaQuery.of(context).size.width - 60) / 2,
                       height: 120,
@@ -157,7 +211,7 @@ class _HabitDashboardState extends State<HabitDashboard> {
                   ),
                   //выполнено дней из общего кол-ва деней
                   Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.only(left: 20, top: 20),
                     child: SizedBox(
                       width: (MediaQuery.of(context).size.width - 60) / 2,
                       height: 120,
@@ -196,7 +250,7 @@ class _HabitDashboardState extends State<HabitDashboard> {
                 children: [
                   //лучший стрик
                   Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.only(left: 20, top: 20),
                     child: SizedBox(
                       width: (MediaQuery.of(context).size.width - 60) / 2,
                       height: 120,
@@ -220,7 +274,7 @@ class _HabitDashboardState extends State<HabitDashboard> {
                   ),
                   //текущий стрик
                   Padding(
-                    padding: const EdgeInsets.only(left: 20),
+                    padding: const EdgeInsets.only(left: 20, top: 20),
                     child: SizedBox(
                       width: (MediaQuery.of(context).size.width - 60) / 2,
                       height: 120,

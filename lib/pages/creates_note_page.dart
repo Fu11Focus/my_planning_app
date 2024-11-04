@@ -80,7 +80,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
     //ожидание показа диалогового окна перед закрытием страницы редактирования
     Future.delayed(
       const Duration(milliseconds: 2400),
-      () => Navigator.pushNamed(context, '/notes'),
+      () => Navigator.pop(context),
     );
   }
 
@@ -275,14 +275,17 @@ class _CreateNotePageState extends State<CreateNotePage> {
                     ],
                   ),
                 ),
+                Container(
+                  height: 2,
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: shadowLight,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.only(top: 20),
-                    decoration: const BoxDecoration(
-                      color: bg,
-                      boxShadow: [BoxShadow(color: shadowLight, offset: Offset(0, -5), blurRadius: 5)],
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-                    ),
+                    padding: const EdgeInsets.only(top: 5),
                     child: TextField(
                       controller: _desc,
                       enabled: true,

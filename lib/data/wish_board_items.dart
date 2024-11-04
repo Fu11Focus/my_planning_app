@@ -5,13 +5,21 @@ class WishItems extends ChangeNotifier {
   List wishItems = [];
   final wishBox = Hive.box('WishBox');
 
-  void createInitialData() {
+  void createInitialOrLoadData() {
+    if (wishBox.get('WISHITEMS') == null) {
+      _createInitialData();
+    } else {
+      _loadData();
+    }
+  }
+
+  void _createInitialData() {
     wishItems = [
       // {'img': null, 'txt': 'Hello!'},
     ];
   }
 
-  void loadData() {
+  void _loadData() {
     wishItems = wishBox.get('WISHITEMS');
   }
 

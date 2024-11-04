@@ -1,5 +1,6 @@
 import 'dart:io';
-
+import 'package:ToDoDude/widgets/neo_container.dart';
+import 'package:flutter/material.dart' hide CarouselController;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -10,9 +11,10 @@ import 'package:ToDoDude/widgets/my_appbar.dart';
 import 'package:ToDoDude/widgets/neomorphism_button.dart';
 import 'package:ToDoDude/widgets/right_menu.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:popover/popover.dart';
+
+import '../widgets/bottom_nav_bar.dart';
 
 class WishBoardPage extends StatefulWidget {
   const WishBoardPage({Key? key}) : super(key: key);
@@ -27,35 +29,27 @@ class _WishBoardPageState extends State<WishBoardPage> {
   String imgSelectPath = '...';
   late List<dynamic> wishboard;
   File? _imageFile;
-  final _myBox = Hive.box('WishBox');
   WishItems dbItems = WishItems();
 
   @override
   void initState() {
     super.initState();
-    if (_myBox.get('WISHITEMS') == null) {
-      dbItems.createInitialData();
-    } else {
-      dbItems.loadData();
-    }
+    dbItems.createInitialOrLoadData();
     imgSelectPath = '...';
     _imageFile = null;
     wishboard = dbItems.wishItems;
-
     textVisible = TextEditingController(text: '');
   }
 
   void saveVisible() async {
     if (result != null) {
       File image = File(result!.files.single.path!);
-
       Directory appDir = await getApplicationDocumentsDirectory();
       String newPath = '${appDir.path}/images';
 
       if (!(await Directory(newPath).exists())) {
         await Directory(newPath).create(recursive: true);
       }
-
       String newFilePath = '$newPath/${image.path.split('/').last}';
 
       await image.copy(newFilePath);
@@ -103,7 +97,6 @@ class _WishBoardPageState extends State<WishBoardPage> {
         builder: (context) => StatefulBuilder(
             builder: (context, setDialogState) => AlertDialog(
                   actionsPadding: const EdgeInsets.all(0),
-                  // insetPadding: const EdgeInsets.only(top: 10, bottom: 300, left: 20, right: 20),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   contentPadding: const EdgeInsets.all(0),
                   contentTextStyle: const TextStyle(color: txt),
@@ -114,26 +107,29 @@ class _WishBoardPageState extends State<WishBoardPage> {
                     child: Column(
                       children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 20, right: 20, bottom: 40, left: 20),
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          decoration: const BoxDecoration(
-                              gradient: LinearGradient(colors: [
-                                Color(0xff24262b),
-                                bg,
-                                Color(0xff36383d)
-                              ], stops: [
-                                0.4,
-                                0.6,
-                                1,
-                              ], begin: Alignment.topLeft, end: Alignment.bottomRight, transform: GradientRotation(0.95)),
-                              /*color: bg,*/ borderRadius: BorderRadius.all(Radius.circular(10)),
-                              boxShadow: [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 5), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 5)]),
+                          margin: const EdgeInsets.all(20),
+                          height: 40,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(imgSelectPath.length > 20 ? '${imgSelectPath.substring(0, 20)}...' : imgSelectPath),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
+                              Expanded(
+                                flex: 85,
+                                child: NeoContainer(
+                                  child: Container(
+                                    height: 35,
+                                    margin: const EdgeInsets.only(right: 10),
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                    child: Text(
+                                      imgSelectPath.length > 20 ? '${imgSelectPath.substring(0, 20)}...' : imgSelectPath,
+                                      style: const TextStyle(color: txt),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10), // Отступ между элементами
+                              Flexible(
+                                flex: 15,
                                 child: NeomorphismButton(
                                   action: () => _pickImage(setDialogState),
                                   height: 35,
@@ -144,21 +140,17 @@ class _WishBoardPageState extends State<WishBoardPage> {
                                     size: 16,
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
-                        Container(
-                          height: 100,
-                          padding: const EdgeInsets.only(top: 20),
-                          decoration: const BoxDecoration(color: bg, borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)), boxShadow: [BoxShadow(color: shadowLight, offset: Offset(0, -5), blurRadius: 5)]),
-                          child: TextField(
-                            controller: textVisible,
-                            style: const TextStyle(color: txt),
-                            maxLines: 10,
-                            decoration: const InputDecoration(hintText: 'Write your goals, dreams, visible :)'),
-                          ),
-                        )
+                        Container(margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5), height: 2, decoration: BoxDecoration(color: shadowLight, borderRadius: BorderRadius.circular(2))),
+                        TextField(
+                          controller: textVisible,
+                          style: const TextStyle(color: txt),
+                          maxLines: 10,
+                          decoration: const InputDecoration(hintText: 'Write your goals, dreams, visible :)'),
+                        ),
                       ],
                     ),
                   ),
@@ -199,17 +191,20 @@ class _WishBoardPageState extends State<WishBoardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: const RightMenu(thisPage: 'Whish Board'),
+      endDrawer: const RightMenu(thisPage: 'Wish Board'),
       appBar: const MyAppBar(
         icon: Icons.sunny_snowing,
         text: 'Wish Board',
       ),
       body: wishboard.isEmpty
           ? const Center(
-              child: Text(
-                'You can add to board anyhthink with photo or text. Save on board your dream!',
-                style: TextStyle(color: hintTxt, fontSize: 18),
-                textAlign: TextAlign.center,
+              child: Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Text(
+                  'You can add to board anyhthink with photo or text. Save on board your dream!',
+                  style: TextStyle(color: hintTxt, fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
               ),
             )
           : MasonryGridView.builder(
@@ -300,17 +295,7 @@ class _WishBoardPageState extends State<WishBoardPage> {
                 );
               }),
             ),
-      bottomNavigationBar: SizedBox(
-        height: 80,
-        child: Center(
-          child: NeomorphismButton(
-            action: showDialogWishboard,
-            height: 40,
-            width: 40,
-            child: const Icon(Icons.add, color: brand),
-          ),
-        ),
-      ),
+      bottomNavigationBar: BottomNavBar(action: showDialogWishboard),
     );
   }
 }

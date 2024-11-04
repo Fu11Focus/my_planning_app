@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:ToDoDude/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ToDoDude/data/inbox.dart';
@@ -53,7 +54,7 @@ class _InboxState extends State<Inbox> {
         builder: (context, setDialogState) => AlertDialog(
           titleTextStyle: TextStyle(color: txt),
           actionsPadding: const EdgeInsets.all(0),
-          insetPadding: const EdgeInsets.only(top: 10, bottom: 300, left: 20, right: 20),
+          // insetPadding: const EdgeInsets.only(top: 10, bottom: 0, left: 20, right: 20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           contentPadding: const EdgeInsets.all(0),
           contentTextStyle: const TextStyle(color: txt),
@@ -125,13 +126,12 @@ class _InboxState extends State<Inbox> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  surface: Theme.of(context).scaffoldBackgroundColor,
-                  primary: brand, // header background color
-                  onPrimary: txt, // header text color
-                  onSurface: txt, // body text color
-                ),
-            dialogBackgroundColor: Colors.white, // background color of the date picker dialog
+            colorScheme: ColorScheme.dark(
+              surface: Theme.of(context).scaffoldBackgroundColor,
+              primary: brand, // header background color
+              onPrimary: bg, // header text color
+              onSurface: txt, // body text color
+            ),
           ),
           child: child!,
         );
@@ -161,7 +161,7 @@ class _InboxState extends State<Inbox> {
           elevation: 0,
           content: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            height: 150,
+            height: 130,
             child: Column(children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -184,30 +184,17 @@ class _InboxState extends State<Inbox> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: NeoContainer(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 40),
-                          child: Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: NeomorphismButton(
-                            action: () => _selectDate(setDialogState),
-                            height: 30,
-                            width: 100,
-                            child: const Text('Select date',
-                                style: TextStyle(
-                                  color: txt,
-                                )),
-                          ),
-                        )
-                      ],
-                    ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        child: NeomorphismButton(action: () => _selectDate(setDialogState), height: 30, width: 30, child: Icon(Icons.arrow_drop_down, color: txt)),
+                      )
+                    ],
                   ),
                 ),
               )
@@ -219,7 +206,7 @@ class _InboxState extends State<Inbox> {
               child: NeomorphismButton(
                 action: () {
                   setState(() {
-                    todoDB.addTodoItem(title, false, dateForNewTask);
+                    todoDB.addTodoItem(title, false, dateForNewTask, null, null);
                     inboxDB.inboxList.removeAt(inboxDB.inboxList.indexWhere((element) => element['id'] == id));
                     newTaskController.clear();
                   });
@@ -257,7 +244,17 @@ class _InboxState extends State<Inbox> {
       appBar: const MyAppBar(icon: Icons.inbox_outlined, text: 'Inbox'),
       body: inboxDB.inboxList.isEmpty
           ? Center(
-              child: Text('Add another task without date for to do!', style: TextStyle(color: hintTxt, fontSize: 20)),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  'Add another task without date for to do!',
+                  style: TextStyle(
+                    color: hintTxt,
+                    fontSize: 20,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             )
           : Padding(
               padding: const EdgeInsets.only(top: 20.0),
@@ -280,43 +277,23 @@ class _InboxState extends State<Inbox> {
                         ),
                         child: GestureDetector(
                             onTap: () => _addToDoDialog(inboxDB.inboxList[index]['title'], inboxDB.inboxList[index]['id']),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 15),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: bg,
-                                /*border: Border.all(color: shadowLight),*/ boxShadow: [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 10), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 10)],
-                                // gradient: LinearGradient(colors: [
-                                //   Color(0xff24262b),
-                                //   bg,
-                                //   Color(0xff36383d)
-                                // ], stops: [
-                                //   0.2,
-                                //   0.5,
-                                //   1,
-                                // ], begin: Alignment.topLeft, end: Alignment.bottomRight, transform: GradientRotation(0.9)),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                              child: NeoContainer(
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                  child: Text('${index + 1}. ${inboxDB.inboxList[index]['title']}',
+                                      style: TextStyle(
+                                        color: txt,
+                                        fontSize: 16,
+                                      )),
+                                ),
                               ),
-                              child: Text('${index + 1}. ${inboxDB.inboxList[index]['title']}',
-                                  style: TextStyle(
-                                    color: txt,
-                                    fontSize: 16,
-                                  )),
                             )),
                       ))),
             ),
-      bottomNavigationBar: SizedBox(
-        height: 80,
-        child: Center(
-          child: NeomorphismButton(
-            action: _addTodoDialog,
-            height: 40,
-            width: 40,
-            child: const Icon(Icons.add, color: brand),
-          ),
-        ),
-      ),
+      bottomNavigationBar: BottomNavBar(action: _addTodoDialog),
     );
   }
 }

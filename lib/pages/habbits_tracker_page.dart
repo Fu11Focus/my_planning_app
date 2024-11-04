@@ -1,12 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:ToDoDude/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:ToDoDude/data/habits.dart';
 import 'package:ToDoDude/my_icons_icons.dart';
 import 'package:ToDoDude/util/color_palette.dart';
 import 'package:ToDoDude/widgets/my_appbar.dart';
-import 'package:ToDoDude/widgets/neo_container.dart';
 import 'package:ToDoDude/widgets/right_menu.dart';
 import 'package:ToDoDude/widgets/week_day_button.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -124,13 +124,12 @@ class _HabitsTrackerState extends State<HabitsTracker> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  surface: Theme.of(context).scaffoldBackgroundColor,
-                  primary: brand, // header background color
-                  onPrimary: txt, // header text color
-                  onSurface: txt, // body text color
-                ),
-            dialogBackgroundColor: Colors.white, // background color of the date picker dialog
+            colorScheme: ColorScheme.dark(
+              surface: Theme.of(context).scaffoldBackgroundColor,
+              primary: brand, // header background color
+              onSurface: txt, // body text color
+            ),
+            dialogBackgroundColor: Colors.black, // background color of the date picker dialog
           ),
           child: child!,
         );
@@ -152,14 +151,12 @@ class _HabitsTrackerState extends State<HabitsTracker> {
       lastDate: DateTime(2100),
       builder: (BuildContext context, Widget? child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  surface: Theme.of(context).scaffoldBackgroundColor,
-                  primary: brand, // header background color
-                  onPrimary: txt, // header text color
-                  onSurface: txt, // body text color
-                ),
-            dialogBackgroundColor: Colors.white, // background color of the date picker dialog
+          data: ThemeData().copyWith(
+            colorScheme: ColorScheme.dark(
+              surface: bg, //bg
+              primary: brand, // header background color
+              onSurface: txt, // body text color
+            ),
           ),
           child: child!,
         );
@@ -195,13 +192,11 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                   backgroundColor: bg,
                   elevation: 0,
                   insetPadding: EdgeInsets.symmetric(horizontal: 10),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   content: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
-                    height: 350,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    height: 200,
+                    child: ListView(
                       children: [
                         Container(
                           decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: Colors.transparent, boxShadow: const [BoxShadow(color: shadowDark), BoxShadow(color: bg, spreadRadius: -5, blurRadius: 5)]),
@@ -210,7 +205,7 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                             style: const TextStyle(color: txt),
                             decoration: InputDecoration(
                               hintText: 'Enter habit',
-                              contentPadding: EdgeInsets.all(10),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 10),
                               fillColor: txt,
                             ),
                           ),
@@ -281,80 +276,66 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                             ),
                           ],
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10),
-                              child: Text(
-                                'Start date:',
-                                style: TextStyle(color: txt),
-                              ),
-                            ),
-                            NeoContainer(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //block for selecting date start\end
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              //start column
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Text(
+                                  'Start:',
+                                  style: TextStyle(color: txt),
+                                ),
+                                Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(right: 40),
+                                      padding: const EdgeInsets.only(right: 10),
                                       child: Text(
                                         DateFormat('dd.MM.yyyy').format(startNewHabit),
                                         style: TextStyle(color: txt),
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      child: NeomorphismButton(
-                                        action: () => _selectStartDate(setState),
-                                        height: 30,
-                                        width: 100,
-                                        child: Text('Select date',
-                                            style: TextStyle(
-                                              color: txt,
-                                            )),
+                                    NeomorphismButton(
+                                      action: () => _selectStartDate(setState),
+                                      height: 30,
+                                      width: 30,
+                                      child: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: txt,
                                       ),
                                     ),
                                   ],
-                                ),
-                              ),
-                            ),
-                            Text(
-                              'Finish date:',
-                              style: TextStyle(color: txt),
-                            ),
-                            NeoContainer(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                )
+                              ]),
+                              //finish column
+                              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Text('Finish:', style: TextStyle(color: txt)),
+                                Row(
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.only(right: 40),
+                                      padding: const EdgeInsets.only(right: 10.0),
                                       child: Text(
                                         DateFormat('dd.MM.yyyy').format(finishNewHabit),
                                         style: TextStyle(color: txt),
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      child: NeomorphismButton(
-                                        action: () => _selectFinishDate(setState),
-                                        height: 30,
-                                        width: 100,
-                                        child: Text('Select date',
-                                            style: TextStyle(
-                                              color: txt,
-                                            )),
+                                    NeomorphismButton(
+                                      action: () => _selectFinishDate(setState),
+                                      height: 30,
+                                      width: 30,
+                                      child: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: txt,
                                       ),
-                                    )
+                                    ),
                                   ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
+                                )
+                              ]),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -396,100 +377,92 @@ class _HabitsTrackerState extends State<HabitsTracker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      endDrawer: const RightMenu(thisPage: 'Habits'),
-      appBar: const MyAppBar(icon: Icons.task_alt_sharp, text: 'Habits'),
-      body: habitsList.isEmpty
-          ? Center(
-              child: Text(
-                'Enter on "+" for create ur first habit.',
-                style: TextStyle(color: hintTxt, fontSize: 20),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: ListView.builder(
-                itemCount: habitsList.length,
-                itemBuilder: ((context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    child: Slidable(
-                      endActionPane: ActionPane(motion: const StretchMotion(), children: [
-                        SlidableAction(
-                          autoClose: true,
-                          onPressed: (context) => {
-                            setState(() {
-                              dbHabits.removeHabit(index);
-                              habitsList = dbHabits.habbitsList;
-                            })
-                          },
-                          icon: MyIcons.trash,
-                          backgroundColor: bg,
-                        ),
-                      ]),
-                      child: Container(
-                          padding: const EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                              gradient: const LinearGradient(colors: [
-                                Color(0xff24262b),
-                                Color(0xff36383d)
-                              ], stops: [
-                                0.4,
-                                1,
-                              ], begin: Alignment.topLeft, end: Alignment.bottomRight, transform: GradientRotation(0.9)),
-                              borderRadius: BorderRadius.circular(12),
-                              /*border: Border.all(color: shadowLight),*/ boxShadow: const [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 10), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 10)]),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+        endDrawer: const RightMenu(thisPage: 'Habits'),
+        appBar: const MyAppBar(icon: Icons.task_alt_sharp, text: 'Habits'),
+        body: habitsList.isEmpty
+            ? Center(
+                child: Text(
+                  'Enter on "+" for create ur first habit.',
+                  style: TextStyle(color: hintTxt, fontSize: 20),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: ListView.builder(
+                  itemCount: habitsList.length,
+                  itemBuilder: ((context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      child: GestureDetector(
+                        onTap: () => Navigator.pushNamed(context, '/habitDashboard', arguments: {'habit': dbHabits.habbitsList[index]}),
+                        child: Slidable(
+                          endActionPane: ActionPane(motion: const StretchMotion(), children: [
+                            SlidableAction(
+                              autoClose: true,
+                              onPressed: (context) => {
+                                setState(() {
+                                  dbHabits.removeHabit(index);
+                                  habitsList = dbHabits.habbitsList;
+                                })
+                              },
+                              icon: MyIcons.trash,
+                              backgroundColor: bg,
+                            ),
+                          ]),
+                          child: Container(
+                              padding: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                  gradient: const LinearGradient(colors: [
+                                    Color(0xff24262b),
+                                    Color(0xff36383d)
+                                  ], stops: [
+                                    0.4,
+                                    1,
+                                  ], begin: Alignment.topLeft, end: Alignment.bottomRight, transform: GradientRotation(0.9)),
+                                  borderRadius: BorderRadius.circular(12),
+                                  /*border: Border.all(color: shadowLight),*/ boxShadow: const [BoxShadow(color: shadowDark, offset: Offset(5, 5), blurRadius: 10), BoxShadow(color: shadowLight, offset: Offset(-5, -5), blurRadius: 10)]),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text(
-                                    habitsList[index]['title'].length > 25 ? '${habitsList[index]['title'].substring(0, 25)}...' : habitsList[index]['title'],
-                                    style: TextStyle(color: txt, fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.start,
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        habitsList[index]['title'].length > 25 ? '${habitsList[index]['title'].substring(0, 25)}...' : habitsList[index]['title'],
+                                        style: TextStyle(color: txt, fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      Divider(
+                                        height: 10,
+                                        color: bg,
+                                      ),
+                                      Text(
+                                        '${habitsList[index]['daysOfWeek'].contains('Sun') ? 'Sun ' : ''}${habitsList[index]['daysOfWeek'].contains('Mon') ? 'Mon ' : ''}${habitsList[index]['daysOfWeek'].contains('Tue') ? 'Tue ' : ''}${habitsList[index]['daysOfWeek'].contains('Wed') ? 'Wed ' : ''}${habitsList[index]['daysOfWeek'].contains('Thu') ? 'Thu ' : ''}${habitsList[index]['daysOfWeek'].contains('Fri') ? 'Fri ' : ''}${habitsList[index]['daysOfWeek'].contains('Sat') ? 'Sat' : ''}',
+                                        style: TextStyle(
+                                          color: txt,
+                                        ),
+                                      ),
+                                      Divider(
+                                        height: 10,
+                                        color: bg,
+                                      ),
+                                      Text('${DateFormat('dd.MM.yyyy').format(habitsList[index]['start'])} - ${DateFormat('dd.MM.yyyy').format(habitsList[index]['finish'])}', style: TextStyle(color: txt)),
+                                    ],
                                   ),
-                                  Divider(
-                                    height: 10,
-                                    color: bg,
-                                  ),
                                   Text(
-                                    '${habitsList[index]['daysOfWeek'].contains('Sun') ? 'Sun ' : ''}${habitsList[index]['daysOfWeek'].contains('Mon') ? 'Mon ' : ''}${habitsList[index]['daysOfWeek'].contains('Tue') ? 'Tue ' : ''}${habitsList[index]['daysOfWeek'].contains('Wed') ? 'Wed ' : ''}${habitsList[index]['daysOfWeek'].contains('Thu') ? 'Thu ' : ''}${habitsList[index]['daysOfWeek'].contains('Fri') ? 'Fri ' : ''}${habitsList[index]['daysOfWeek'].contains('Sat') ? 'Sat' : ''}',
+                                    'Progress:\n${calculateHabitProgress(habitsList[index])}%',
                                     style: TextStyle(
                                       color: txt,
                                     ),
                                   ),
-                                  Divider(
-                                    height: 10,
-                                    color: bg,
-                                  ),
-                                  Text('${DateFormat('dd.MM.yyyy').format(habitsList[index]['start'])} - ${DateFormat('dd.MM.yyyy').format(habitsList[index]['finish'])}', style: TextStyle(color: txt)),
                                 ],
-                              ),
-                              Text(
-                                'Progress:\n${calculateHabitProgress(habitsList[index])}%',
-                                style: TextStyle(
-                                  color: txt,
-                                ),
-                              ),
-                            ],
-                          )),
-                    ),
-                  );
-                }),
+                              )),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
               ),
-            ),
-      bottomNavigationBar: SizedBox(
-        height: 80,
-        child: Center(
-          child: NeomorphismButton(
-            action: () => createHabitDialog(daysOfWeekHabit: daysOfWeek),
-            height: 40,
-            width: 40,
-            child: const Icon(Icons.add, color: brand),
-          ),
-        ),
-      ),
-    );
+        bottomNavigationBar: BottomNavBar(action: () => createHabitDialog(daysOfWeekHabit: daysOfWeek)));
   }
 }

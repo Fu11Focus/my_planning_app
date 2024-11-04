@@ -23,24 +23,30 @@ class _NeomorphismButtonState extends State<NeomorphismButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (details) {
-        setState(() {
-          _offset = 0;
-        });
+      onTap: () async {
+        await Future.delayed(const Duration(milliseconds: 800), widget.action);
       },
-      onTapUp: (details) {
-        setState(() {
-          _offset = 5;
-        });
-        Future.delayed(const Duration(milliseconds: 100), widget.action);
+      onTapDown: (details) async {
+        await Future.delayed(
+            const Duration(milliseconds: 200),
+            () => setState(() {
+                  _offset = 0;
+                }));
       },
-      onTapCancel: () {
+      onTapUp: (details) async {
+        await Future.delayed(
+            const Duration(milliseconds: 400),
+            () => setState(() {
+                  _offset = 5;
+                }));
+      },
+      onTapCancel: () async {
         setState(() {
           _offset = 5;
         });
       },
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 50),
+        duration: const Duration(milliseconds: 200),
         width: widget.width,
         height: widget.height,
         padding: const EdgeInsets.all(0),
@@ -77,7 +83,7 @@ class _NeomorphismButtonState extends State<NeomorphismButton> {
                   1,
                 ], begin: Alignment.topLeft, end: Alignment.bottomRight),
                 color: bg,
-                /*border: Border.all(color: shadowLight, width: 1),*/ borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                     BoxShadow(
                       color: shadowDark,

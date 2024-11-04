@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:ToDoDude/util/color_palette.dart';
 
 class RightMenu extends StatelessWidget {
@@ -29,10 +28,9 @@ class RightMenu extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.all(0),
-      width: 300,
-      height: 1000,
-      margin: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.height * 0.12),
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      width: 190,
+      height: 380,
       decoration: const BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(12),
@@ -40,13 +38,8 @@ class RightMenu extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: shadowLight,
-            blurRadius: 5,
-            offset: Offset(-5, -5),
-          ),
-          BoxShadow(
-            color: shadowDark,
-            blurRadius: 5,
+            color: Color(0x99000000),
+            spreadRadius: 1000,
             offset: Offset(5, 5),
           ),
         ],
@@ -55,25 +48,17 @@ class RightMenu extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
-            height: 400,
-            child: ListView(
-              padding: const EdgeInsets.only(top: 20),
-              children: <Widget>[
-                buildListTile(Icons.sunny_snowing, 'Whish Board', '/wishboard'),
-                buildListTile(Icons.sports_basketball, 'Habits', '/habbitsTracker'),
-                buildListTile(Icons.calendar_month, 'Calendar', '/calendar'),
-                buildListTile(Icons.inbox, 'Inbox', '/inbox'),
-                buildListTile(Icons.create_rounded, 'Notes', '/notes'),
-                // buildListTile(Icons.style, 'Projects', '/projects'),
-                buildListTile(Icons.add_chart_outlined, 'Dashboard', '/statistics'),
-                // buildListTile(Icons.settings, 'Settings', '/settings'),
-              ],
+          buildListTile(Icons.sunny_snowing, 'Wish Board', '/wishboard'),
+          buildListTile(Icons.sports_basketball, 'Habits', '/habbitsTracker'),
+          buildListTile(Icons.calendar_month, 'Calendar', '/calendar'),
+          buildListTile(Icons.inbox, 'Inbox', '/inbox'),
+          buildListTile(Icons.create_rounded, 'Notes', '/notes'),
+          buildListTile(Icons.add_chart_outlined, 'Dashboard', '/statistics'),
+          const Center(
+            child: Text(
+              'v1.0.0',
+              style: TextStyle(color: hintTxt),
             ),
-          ),
-          const Text(
-            'v1.0.0',
-            style: TextStyle(color: hintTxt),
           ),
         ],
       ),

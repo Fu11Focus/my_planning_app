@@ -27,7 +27,7 @@ class _WeekDayButtonState extends State<WeekDayButton> {
               child: Text(
                 widget.dayOfWeek,
                 style: TextStyle(
-                  color: widget.active ? shadowDark : txt,
+                  color: widget.active ? bg : txt,
                   fontSize: ((MediaQuery.of(context).size.width * 0.8) / 7.5) / 3.46,
                 ),
               ),

@@ -1,5 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:math';
+
+import 'package:ToDoDude/widgets/bottom_nav_bar.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_calendar/flutter_advanced_calendar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -30,6 +34,9 @@ class _CalendarState extends State<Calendar> {
 
   DateTime selectDate = DateTime.now();
   late DateTime dateForNewTask;
+  late DateTime notificationTime;
+  late bool notificationIsNotEmpty;
+
   TextEditingController newTaskController = TextEditingController();
   AdvancedCalendarController controller = AdvancedCalendarController.today();
 
@@ -41,6 +48,8 @@ class _CalendarState extends State<Calendar> {
     _initializeData();
     dateForNewTask = DateTime.now();
     allTaskForToday = _getAllTaskForToday();
+    notificationTime = DateTime.now();
+    notificationIsNotEmpty = false;
   }
 
   void _initializeData() {
@@ -58,7 +67,7 @@ class _CalendarState extends State<Calendar> {
 
   List<Widget> _getAllTaskForToday() {
     List<Widget> allTask = [];
-    todoDB.todoList.forEach((e) {
+    for (var e in todoDB.todoList) {
       if (DateFormat('dd MMM yyyy').format(e['date']) == DateFormat('dd MMM yyyy').format(selectDate)) {
         allTask.add(
           Slidable(
@@ -74,7 +83,7 @@ class _CalendarState extends State<Calendar> {
               )
             ]),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: NeoContainer(
                 child: Theme(
                   data: ThemeData(
@@ -96,8 +105,21 @@ class _CalendarState extends State<Calendar> {
                     onChanged: (checked) {
                       _toggleTodoStatus(e['id'], checked);
                     },
-                    subtitle: Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
-                    // overlayColor: const MaterialStatePropertyAll(brand),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
+                        e['notification'] != null
+                            ? Row(
+                                children: [
+                                  Icon(Icons.notifications_rounded, color: e['done'] ? hintTxt : txt, size: 16),
+                                  Text(DateFormat('Hm').format(e['notification']), style: TextStyle(color: e['done'] ? hintTxt : txt)),
+                                ],
+                              )
+                            : const Text(''),
+                      ],
+                    ),
                     fillColor: const MaterialStatePropertyAll(shadowDark),
                   ),
                 ),
@@ -127,7 +149,7 @@ class _CalendarState extends State<Calendar> {
                 )
               ]),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: NeoContainer(
                   child: Theme(
                     data: ThemeData(
@@ -149,8 +171,18 @@ class _CalendarState extends State<Calendar> {
                       onChanged: (checked) {
                         _toggleTodoStatus(e['id'], checked);
                       },
-                      subtitle: Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
-                      // overlayColor: const MaterialStatePropertyAll(brand),
+                      subtitle: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text('todo', style: TextStyle(color: e['done'] ? hintTxt : txt)),
+                          e['notification'] != null
+                              ? Row(
+                                  children: [const Icon(Icons.notifications_rounded, color: txt, size: 16), Text(DateFormat('Hm').format(e['notification']), style: const TextStyle(color: txt))],
+                                )
+                              : const Text(''),
+                        ],
+                      ),
                       fillColor: const MaterialStatePropertyAll(shadowDark),
                     ),
                   ),
@@ -158,13 +190,13 @@ class _CalendarState extends State<Calendar> {
               )),
         );
       }
-    });
+    }
 //выбираем привычки
-    habitsDB.habbitsList.forEach((e) {
+    for (var e in habitsDB.habbitsList) {
       if (e['progress'].containsKey(DateFormat('dd MMM yyyy').format(selectDate)) && DateFormat('dd MMM yyyy').format(selectDate) == DateFormat('dd MMM yyyy').format(DateTime.now())) {
         allTask.add(
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: NeoContainer(
               child: Theme(
                 data: ThemeData(
@@ -187,7 +219,6 @@ class _CalendarState extends State<Calendar> {
                     _toggleHabitStatus(e['id'], checked);
                   },
                   subtitle: Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
-                  // overlayColor: const MaterialStatePropertyAll(brand),
                   fillColor: const MaterialStatePropertyAll(shadowDark),
                 ),
               ),
@@ -197,7 +228,7 @@ class _CalendarState extends State<Calendar> {
       } else if (e['progress'].containsKey(DateFormat('dd MMM yyyy').format(selectDate))) {
         allTask.add(
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: NeoContainer(
               child: Theme(
                 data: ThemeData(
@@ -229,25 +260,35 @@ class _CalendarState extends State<Calendar> {
           ),
         );
       }
-    });
+    }
     return allTask;
   }
 
   void _addTodo() {
+    int notificationId = Random().nextInt(10000000);
+    DateTime notificationTimeForTask = DateTime(dateForNewTask.year, dateForNewTask.month, dateForNewTask.day, notificationTime.hour, notificationTime.minute);
     if (newTaskController.text.isNotEmpty) {
       setState(() {
-        todoDB.addTodoItem(newTaskController.text, false, dateForNewTask);
+        todoDB.addTodoItem(newTaskController.text, false, dateForNewTask, notificationIsNotEmpty ? notificationTimeForTask : null, notificationIsNotEmpty ? notificationId : null);
         allTaskForToday = _getAllTaskForToday();
         dateForNewTask = DateTime.now();
       });
       Navigator.pop(context);
       newTaskController.text = '';
-      dateForNewTask = DateTime.now();
+      notificationIsNotEmpty = false;
+      notificationTime = DateTime.now();
     }
+  }
+
+  void changeNotificationEmpty(Function setDialogState) {
+    setDialogState(() {
+      notificationIsNotEmpty = !notificationIsNotEmpty;
+    });
   }
 
   Future<void> _selectDate(Function setDialogState) async {
     DateTime? picked = await showDatePicker(
+      barrierDismissible: false,
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
@@ -255,13 +296,12 @@ class _CalendarState extends State<Calendar> {
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData(
-            colorScheme: Theme.of(context).colorScheme.copyWith(
-                  surface: Theme.of(context).scaffoldBackgroundColor,
-                  primary: brand, // header background color
-                  onPrimary: txt, // header text color
-                  onSurface: txt, // body text color
-                ),
-            dialogBackgroundColor: Colors.white, // background color of the date picker dialog
+            applyElevationOverlayColor: false,
+            colorScheme: const ColorScheme.dark(
+              surface: bg,
+              primary: brand, // header background color
+              onSurface: txt, // body text color
+            ),
           ),
           child: child!,
         );
@@ -290,7 +330,7 @@ class _CalendarState extends State<Calendar> {
           elevation: 0,
           content: SizedBox(
             width: MediaQuery.of(context).size.width - 40,
-            height: 150,
+            height: 160,
             child: Column(children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -307,33 +347,69 @@ class _CalendarState extends State<Calendar> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: NeoContainer(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
+              SizedBox(
+                height: 70,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(right: 40),
-                          child: Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10.0),
+                          child: Text('Date:'),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: NeomorphismButton(
-                            action: () => _selectDate(setDialogState),
-                            height: 30,
-                            width: 100,
-                            child: const Text('Select date',
-                                style: TextStyle(
-                                  color: txt,
-                                )),
-                          ),
-                        )
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                              child: NeomorphismButton(
+                                action: () => _selectDate(setDialogState),
+                                height: 30,
+                                width: 30,
+                                child: const Icon(Icons.arrow_drop_down, color: txt),
+                              ),
+                            )
+                          ],
+                        ),
                       ],
                     ),
-                  ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              "Notification",
+                            ),
+                            Checkbox(
+                              value: notificationIsNotEmpty,
+                              onChanged: (value) => changeNotificationEmpty(setDialogState),
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(notificationIsNotEmpty ? DateFormat('Hm').format(notificationTime) : "All day"),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                              child: NeomorphismButton(
+                                action: () => setNotificationTimeDialog(setDialogState),
+                                height: 30,
+                                width: 30,
+                                child: const Icon(Icons.notifications_rounded, color: txt, size: 18),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    )
+                  ],
                 ),
               )
             ]),
@@ -351,7 +427,12 @@ class _CalendarState extends State<Calendar> {
             Padding(
               padding: const EdgeInsets.only(right: 20, bottom: 20, top: 20),
               child: NeomorphismButton(
-                action: () => {Navigator.pop(context), newTaskController.text = '', dateForNewTask = DateTime.now()},
+                action: () => {
+                  Navigator.pop(context),
+                  newTaskController.text = '',
+                  dateForNewTask = DateTime.now(),
+                  notificationIsNotEmpty = false,
+                },
                 height: 40,
                 width: 80,
                 child: const Text('Cancel', style: TextStyle(color: txt, fontSize: 18)),
@@ -364,6 +445,10 @@ class _CalendarState extends State<Calendar> {
   }
 
   void _toggleTodoStatus(String id, bool? checked) {
+    if (checked != null) {
+      int index = todoDB.todoList.indexWhere((e) => e['id'] == id);
+      checked && todoDB.todoList[index]['notificationId'] != null ? AwesomeNotifications().cancel(todoDB.todoList[index]['notificationId']) : null;
+    }
     setState(() {
       todoDB.toDone(id, checked);
       allTaskForToday = _getAllTaskForToday();
@@ -386,28 +471,45 @@ class _CalendarState extends State<Calendar> {
       });
     });
     return Scaffold(
-      endDrawer: const RightMenu(thisPage: 'Calendar'),
-      drawerScrimColor: Colors.transparent,
-      appBar: const MyAppBar(icon: Icons.calendar_month_outlined, text: 'Calendar'),
-      body: Column(
-        children: [
-          MyAdvencedCalendar(controller: controller),
-          Expanded(
-            child: ListView.builder(itemCount: allTaskForToday.length, itemBuilder: (context, index) => allTaskForToday[index]),
-          )
-        ],
-      ),
-      bottomNavigationBar: SizedBox(
-        height: 80,
-        child: Center(
-          child: NeomorphismButton(
-            action: _addTodoDialog,
-            height: 40,
-            width: 40,
-            child: const Icon(Icons.add, color: brand),
-          ),
+        endDrawer: const RightMenu(thisPage: 'Calendar'),
+        drawerScrimColor: Colors.transparent,
+        appBar: const MyAppBar(icon: Icons.calendar_month_outlined, text: 'Calendar'),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: MyAdvencedCalendar(controller: controller),
+            ),
+            Expanded(
+              child: ListView.builder(itemCount: allTaskForToday.length, itemBuilder: (context, index) => allTaskForToday[index]),
+            )
+          ],
         ),
-      ),
-    );
+        bottomNavigationBar: BottomNavBar(action: _addTodoDialog));
+  }
+
+  void setNotificationTimeDialog(setState) async {
+    TimeOfDay? selectedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData(
+              applyElevationOverlayColor: false,
+              colorScheme: const ColorScheme.dark(
+                surface: bg,
+                primary: brand, // header background color
+                onSurface: txt, // body text color
+              ),
+            ),
+            child: child!,
+          );
+        });
+    setState(() {
+      if (selectedTime != null) {
+        //                   DateTime(year, month, day, hour, minute)
+        notificationTime = DateTime(dateForNewTask.year, dateForNewTask.month, dateForNewTask.day, selectedTime.hour, selectedTime.minute);
+      }
+    });
   }
 }

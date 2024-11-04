@@ -11,7 +11,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
-import '../widgets/neomorphism_button.dart';
+import '../widgets/bottom_nav_bar.dart';
 
 class Notes extends StatefulWidget {
   const Notes({Key? key}) : super(key: key);
@@ -27,6 +27,7 @@ class _NotesState extends State<Notes> {
   List viewNotes = [];
   List allTags = [];
   Set tags = {};
+
   @override
   void initState() {
     super.initState();
@@ -184,7 +185,11 @@ class _NotesState extends State<Notes> {
             Expanded(
               child: viewNotes.isEmpty
                   ? const Center(
-                      child: Text('Create ur first note. \nPress on "+".', style: TextStyle(color: hintTxt, fontSize: 20)),
+                      child: Text(
+                        'Create ur first note. \nPress on "+".',
+                        style: TextStyle(color: hintTxt, fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
                     )
                   : ListView.builder(
                       itemCount: viewNotes.length,
@@ -225,17 +230,7 @@ class _NotesState extends State<Notes> {
             )
           ],
         ),
-        bottomNavigationBar: SizedBox(
-          height: 80,
-          child: Center(
-            child: NeomorphismButton(
-              action: () => Navigator.pushNamed(context, '/createNote'),
-              height: 40,
-              width: 40,
-              child: const Icon(Icons.add, color: brand),
-            ),
-          ),
-        ),
+        bottomNavigationBar: BottomNavBar(action: () => Navigator.pushNamed(context, '/createNote')),
       ),
     );
   }

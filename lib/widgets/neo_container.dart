@@ -9,7 +9,7 @@ class NeoContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+      margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
       padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
           gradient: const LinearGradient(colors: [
