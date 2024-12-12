@@ -145,11 +145,13 @@ class _WishBoardPageState extends State<WishBoardPage> {
                           ),
                         ),
                         Container(margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5), height: 2, decoration: BoxDecoration(color: shadowLight, borderRadius: BorderRadius.circular(2))),
-                        TextField(
-                          controller: textVisible,
-                          style: const TextStyle(color: txt),
-                          maxLines: 10,
-                          decoration: const InputDecoration(hintText: 'Write your goals, dreams, visible :)'),
+                        Expanded(
+                          child: TextField(
+                            controller: textVisible,
+                            style: const TextStyle(color: txt),
+                            maxLines: 10,
+                            decoration: const InputDecoration(hintText: 'Write your goals, dreams, visible :)'),
+                          ),
                         ),
                       ],
                     ),

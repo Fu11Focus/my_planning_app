@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:math';
+
+import 'package:ToDoDude/services/notification_service.dart';
 import 'package:ToDoDude/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -22,7 +25,7 @@ class HabitsTracker extends StatefulWidget {
 }
 
 TextEditingController editNewHabitController = TextEditingController();
-
+DateTime dateForNewTask = DateTime.now();
 List habitsList = [];
 Map daysOfWeek = {
   'Sun': false,
@@ -37,6 +40,8 @@ DateTime startNewHabit = DateTime.now();
 DateTime finishNewHabit = DateTime.now().add(Duration(days: 30));
 final _myBox = Hive.box('HabitsBox');
 HabitsDB dbHabits = HabitsDB();
+NotificationService habitNotificationService = NotificationService();
+DateTime notificationTime = DateTime.now();
 
 class _HabitsTrackerState extends State<HabitsTracker> {
   void saveHabit({id = -1}) {
@@ -68,8 +73,9 @@ class _HabitsTrackerState extends State<HabitsTracker> {
         final snackBar = SnackBar(content: Text('Select days of week!', style: TextStyle(color: Colors.red[300])));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else {
+        int notificationId = Random().nextInt(10000000);
         setState(() {
-          dbHabits.addHabit(editNewHabitController.text, tamp, startNewHabit, finishNewHabit);
+          dbHabits.addHabit(editNewHabitController.text, tamp, startNewHabit, finishNewHabit, habitNotificationService.notificationIsNotEmpty ? notificationTime : null, habitNotificationService.notificationIsNotEmpty ? notificationId : null);
           habitsList = dbHabits.habbitsList;
         });
         editNewHabitController.text = '';
@@ -82,6 +88,7 @@ class _HabitsTrackerState extends State<HabitsTracker> {
           'Fri': false,
           'Sat': false,
         };
+        habitNotificationService.notificationIsNotEmpty = false;
         Navigator.pop(context);
       }
     } else {
@@ -170,6 +177,31 @@ class _HabitsTrackerState extends State<HabitsTracker> {
     }
   }
 
+  void setNotificationTimeDialog(setState) async {
+    TimeOfDay? selectedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData(
+              applyElevationOverlayColor: false,
+              colorScheme: const ColorScheme.dark(
+                surface: bg,
+                primary: brand, // header background color
+                onSurface: txt, // body text color
+              ),
+            ),
+            child: child!,
+          );
+        });
+    setState(() {
+      if (selectedTime != null) {
+        //                   DateTime(year, month, day, hour, minute)
+        notificationTime = DateTime(0, 0, 0, selectedTime.hour, selectedTime.minute);
+      }
+    });
+  }
+
   void createHabitDialog(
       {title = '',
       daysOfWeekHabit = const {
@@ -195,7 +227,7 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                   contentPadding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   content: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
-                    height: 200,
+                    height: 250,
                     child: ListView(
                       children: [
                         Container(
@@ -331,10 +363,39 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                                       ),
                                     ),
                                   ],
-                                )
+                                ),
                               ]),
                             ],
                           ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                const Text("Notification", style: TextStyle(color: txt)),
+                                Checkbox(
+                                  value: habitNotificationService.notificationIsNotEmpty,
+                                  onChanged: (value) => habitNotificationService.changeNotificationEmpty(setState),
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(habitNotificationService.notificationIsNotEmpty ? DateFormat('Hm').format(notificationTime) : "All day", style: TextStyle(color: txt)),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                                  child: NeomorphismButton(
+                                    action: () => habitNotificationService.notificationIsNotEmpty ? setNotificationTimeDialog(setState) : null,
+                                    height: 30,
+                                    width: 30,
+                                    child: const Icon(Icons.notifications_rounded, color: txt, size: 18),
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
                         ),
                       ],
                     ),
@@ -446,7 +507,7 @@ class _HabitsTrackerState extends State<HabitsTracker> {
                                         height: 10,
                                         color: bg,
                                       ),
-                                      Text('${DateFormat('dd.MM.yyyy').format(habitsList[index]['start'])} - ${DateFormat('dd.MM.yyyy').format(habitsList[index]['finish'])}', style: TextStyle(color: txt)),
+                                      Text('${DateFormat('dd.MM.yyyy').format(habitsList[index]['start'])} - ${DateFormat('dd.MM.yyyy').format(habitsList[index]['finish'])}', style: TextStyle(color: txt))
                                     ],
                                   ),
                                   Text(

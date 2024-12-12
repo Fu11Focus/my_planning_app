@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:ToDoDude/services/notification_service.dart';
 import 'package:ToDoDude/widgets/bottom_nav_bar.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _CalendarState extends State<Calendar> {
   DateTime selectDate = DateTime.now();
   late DateTime dateForNewTask;
   late DateTime notificationTime;
-  late bool notificationIsNotEmpty;
+  NotificationService taskNotificationService = NotificationService();
 
   TextEditingController newTaskController = TextEditingController();
   AdvancedCalendarController controller = AdvancedCalendarController.today();
@@ -49,7 +50,6 @@ class _CalendarState extends State<Calendar> {
     dateForNewTask = DateTime.now();
     allTaskForToday = _getAllTaskForToday();
     notificationTime = DateTime.now();
-    notificationIsNotEmpty = false;
   }
 
   void _initializeData() {
@@ -103,7 +103,10 @@ class _CalendarState extends State<Calendar> {
                     ),
                     value: e['done'],
                     onChanged: (checked) {
-                      _toggleTodoStatus(e['id'], checked);
+                      _toggleTodoStatus(
+                        e['id'],
+                        checked,
+                      );
                     },
                     subtitle: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,7 +172,10 @@ class _CalendarState extends State<Calendar> {
                       ),
                       value: e['done'],
                       onChanged: (checked) {
-                        _toggleTodoStatus(e['id'], checked);
+                        _toggleTodoStatus(
+                          e['id'],
+                          checked,
+                        );
                       },
                       subtitle: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -218,7 +224,17 @@ class _CalendarState extends State<Calendar> {
                   onChanged: (checked) {
                     _toggleHabitStatus(e['id'], checked);
                   },
-                  subtitle: Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
+                      e['notificationTime'] != null
+                          ? Row(
+                              children: [Icon(Icons.notifications_rounded, color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt, size: 16), Text(DateFormat('Hm').format(e['notificationTime']), style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt))],
+                            )
+                          : const Text(''),
+                    ],
+                  ),
                   fillColor: const MaterialStatePropertyAll(shadowDark),
                 ),
               ),
@@ -251,7 +267,17 @@ class _CalendarState extends State<Calendar> {
                     final snackBar = SnackBar(content: Text('This day has not yet come!', style: TextStyle(color: Colors.red[300])));
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
-                  subtitle: Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('habit', style: TextStyle(color: e['progress'][DateFormat('dd MMM yyyy').format(selectDate)] ? hintTxt : txt)),
+                      e['notificationTime'] != null
+                          ? Row(
+                              children: [const Icon(Icons.notifications_rounded, color: txt, size: 16), Text(DateFormat('Hm').format(e['notificationTime']), style: const TextStyle(color: txt))],
+                            )
+                          : const Text(''),
+                    ],
+                  ),
                   // overlayColor: const MaterialStatePropertyAll(brand),
                   fillColor: const MaterialStatePropertyAll(shadowDark),
                 ),
@@ -269,21 +295,15 @@ class _CalendarState extends State<Calendar> {
     DateTime notificationTimeForTask = DateTime(dateForNewTask.year, dateForNewTask.month, dateForNewTask.day, notificationTime.hour, notificationTime.minute);
     if (newTaskController.text.isNotEmpty) {
       setState(() {
-        todoDB.addTodoItem(newTaskController.text, false, dateForNewTask, notificationIsNotEmpty ? notificationTimeForTask : null, notificationIsNotEmpty ? notificationId : null);
+        todoDB.addTodoItem(newTaskController.text, false, dateForNewTask, taskNotificationService.notificationIsNotEmpty ? notificationTimeForTask : null, taskNotificationService.notificationIsNotEmpty ? notificationId : null);
         allTaskForToday = _getAllTaskForToday();
         dateForNewTask = DateTime.now();
       });
       Navigator.pop(context);
       newTaskController.text = '';
-      notificationIsNotEmpty = false;
+      taskNotificationService.notificationIsNotEmpty = false;
       notificationTime = DateTime.now();
     }
-  }
-
-  void changeNotificationEmpty(Function setDialogState) {
-    setDialogState(() {
-      notificationIsNotEmpty = !notificationIsNotEmpty;
-    });
   }
 
   Future<void> _selectDate(Function setDialogState) async {
@@ -387,19 +407,19 @@ class _CalendarState extends State<Calendar> {
                               "Notification",
                             ),
                             Checkbox(
-                              value: notificationIsNotEmpty,
-                              onChanged: (value) => changeNotificationEmpty(setDialogState),
+                              value: taskNotificationService.notificationIsNotEmpty,
+                              onChanged: (value) => taskNotificationService.changeNotificationEmpty(setDialogState),
                               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                           ],
                         ),
                         Row(
                           children: [
-                            Text(notificationIsNotEmpty ? DateFormat('Hm').format(notificationTime) : "All day"),
+                            Text(taskNotificationService.notificationIsNotEmpty ? DateFormat('Hm').format(notificationTime) : "All day"),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                               child: NeomorphismButton(
-                                action: () => setNotificationTimeDialog(setDialogState),
+                                action: () => taskNotificationService.notificationIsNotEmpty ? setNotificationTimeDialog(setDialogState) : null,
                                 height: 30,
                                 width: 30,
                                 child: const Icon(Icons.notifications_rounded, color: txt, size: 18),
@@ -431,7 +451,7 @@ class _CalendarState extends State<Calendar> {
                   Navigator.pop(context),
                   newTaskController.text = '',
                   dateForNewTask = DateTime.now(),
-                  notificationIsNotEmpty = false,
+                  taskNotificationService.notificationIsNotEmpty = false,
                 },
                 height: 40,
                 width: 80,
@@ -444,7 +464,10 @@ class _CalendarState extends State<Calendar> {
     );
   }
 
-  void _toggleTodoStatus(String id, bool? checked) {
+  void _toggleTodoStatus(
+    String id,
+    bool? checked,
+  ) {
     if (checked != null) {
       int index = todoDB.todoList.indexWhere((e) => e['id'] == id);
       checked && todoDB.todoList[index]['notificationId'] != null ? AwesomeNotifications().cancel(todoDB.todoList[index]['notificationId']) : null;
@@ -456,6 +479,12 @@ class _CalendarState extends State<Calendar> {
   }
 
   void _toggleHabitStatus(String id, bool? checked) {
+    int index = habitsDB.habbitsList.indexWhere((e) => e['id'] == id);
+    if (checked != null && checked) {
+      AwesomeNotifications().cancel(int.parse(DateFormat('ddMMyyyy').format(selectDate)));
+    } else if (checked != null && !checked) {
+      AwesomeNotifications().createNotification(content: NotificationContent(notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateFormat('ddMMyyyy').format(selectDate)), channelKey: habitsDB.habbitsList[index]['title'], title: "ToDoDude", body: habitsDB.habbitsList[index]['title'], payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: selectDate.year, month: selectDate.month, day: selectDate.day, hour: notificationTime.hour, minute: notificationTime.minute));
+    }
     setState(() {
       habitsDB.toDayIsDone(id, checked, selectDate);
       allTaskForToday = _getAllTaskForToday();

@@ -9,19 +9,11 @@ class AllNotes extends ChangeNotifier {
     allNotes = [
       {
         'key': 0,
-        'title': 'Новая заметка',
-        'desc': 'Something text. bla-bla-bla',
+        'title': 'My note',
+        'desc': 'U can write anythink in description.',
         'date': '21 Oct 2023',
         'tag': 'hobby',
         'pined': true,
-      },
-      {
-        'key': 1,
-        'title': 'Привычки',
-        'desc': 'бег, йога, вода, бросить курить',
-        'date': '20 Feb 2024',
-        'tag': 'Здоровье',
-        'pined': false,
       },
     ];
   }

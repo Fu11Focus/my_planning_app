@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:math';
+
+import 'package:ToDoDude/services/notification_service.dart';
 import 'package:ToDoDude/widgets/bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -29,8 +32,12 @@ TodoList todoDB = TodoList();
 TextEditingController newTaskController = TextEditingController();
 
 class _InboxState extends State<Inbox> {
+  late DateTime notificationTime;
+  NotificationService inboxNotificationService = NotificationService();
+
   @override
   void initState() {
+    notificationTime = DateTime.now();
     if (_myBox.get('INBOXLIST') == null) {
       inboxDB.createInitialData();
     } else {
@@ -161,7 +168,7 @@ class _InboxState extends State<Inbox> {
           elevation: 0,
           content: SizedBox(
             width: MediaQuery.of(context).size.width * 0.8,
-            height: 130,
+            height: 160,
             child: Column(children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -182,20 +189,69 @@ class _InboxState extends State<Inbox> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                        child: NeomorphismButton(action: () => _selectDate(setDialogState), height: 30, width: 30, child: Icon(Icons.arrow_drop_down, color: txt)),
-                      )
-                    ],
-                  ),
+              SizedBox(
+                height: 70,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10.0),
+                          child: Text('Date:'),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(DateFormat('dd.MM.yyyy').format(dateForNewTask)),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                              child: NeomorphismButton(
+                                action: () => _selectDate(setDialogState),
+                                height: 30,
+                                width: 30,
+                                child: const Icon(Icons.arrow_drop_down, color: txt),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              "Notification",
+                            ),
+                            Checkbox(
+                              value: inboxNotificationService.notificationIsNotEmpty,
+                              onChanged: (value) => inboxNotificationService.changeNotificationEmpty(setDialogState),
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(inboxNotificationService.notificationIsNotEmpty ? DateFormat('Hm').format(notificationTime) : "All day"),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                              child: NeomorphismButton(
+                                action: () => setNotificationTimeDialog(setDialogState),
+                                height: 30,
+                                width: 30,
+                                child: const Icon(Icons.notifications_rounded, color: txt, size: 18),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    )
+                  ],
                 ),
               )
             ]),
@@ -206,11 +262,10 @@ class _InboxState extends State<Inbox> {
               child: NeomorphismButton(
                 action: () {
                   setState(() {
-                    todoDB.addTodoItem(title, false, dateForNewTask, null, null);
+                    _addTodo();
                     inboxDB.inboxList.removeAt(inboxDB.inboxList.indexWhere((element) => element['id'] == id));
                     newTaskController.clear();
                   });
-                  Navigator.pop(context);
                 },
                 height: 40,
                 width: 80,
@@ -295,5 +350,45 @@ class _InboxState extends State<Inbox> {
             ),
       bottomNavigationBar: BottomNavBar(action: _addTodoDialog),
     );
+  }
+
+  void _addTodo() {
+    int notificationId = Random().nextInt(10000000);
+    DateTime notificationTimeForTask = DateTime(dateForNewTask.year, dateForNewTask.month, dateForNewTask.day, notificationTime.hour, notificationTime.minute);
+    if (newTaskController.text.isNotEmpty) {
+      setState(() {
+        todoDB.addTodoItem(newTaskController.text, false, dateForNewTask, inboxNotificationService.notificationIsNotEmpty ? notificationTimeForTask : null, inboxNotificationService.notificationIsNotEmpty ? notificationId : null);
+        dateForNewTask = DateTime.now();
+      });
+      Navigator.pop(context);
+      newTaskController.text = '';
+      inboxNotificationService.notificationIsNotEmpty = false;
+      notificationTime = DateTime.now();
+    }
+  }
+
+  void setNotificationTimeDialog(setState) async {
+    TimeOfDay? selectedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData(
+              applyElevationOverlayColor: false,
+              colorScheme: const ColorScheme.dark(
+                surface: bg,
+                primary: brand, // header background color
+                onSurface: txt, // body text color
+              ),
+            ),
+            child: child!,
+          );
+        });
+    setState(() {
+      if (selectedTime != null) {
+        //                   DateTime(year, month, day, hour, minute)
+        notificationTime = DateTime(dateForNewTask.year, dateForNewTask.month, dateForNewTask.day, selectedTime.hour, selectedTime.minute);
+      }
+    });
   }
 }

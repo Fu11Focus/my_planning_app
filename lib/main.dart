@@ -1,6 +1,5 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:ToDoDude/data/all_notes.dart';
 import 'package:ToDoDude/data/start_using_app.dart';
 import 'package:ToDoDude/pages/calendar_page.dart';
 import 'package:ToDoDude/pages/creates_note_page.dart';
@@ -12,15 +11,16 @@ import 'package:ToDoDude/pages/notes_page.dart';
 import 'package:ToDoDude/pages/dashboard_page.dart';
 import 'package:ToDoDude/util/main_theme.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:provider/provider.dart';
 import 'pages/wish_board_page.dart';
 import 'package:flutter/services.dart';
 
 void main() async {
   await AwesomeNotifications().initialize(
       // set the icon to null if you want to use the default app icon
-      null,
-      [NotificationChannel(channelGroupKey: 'basic_channel_group', channelKey: 'basic_channel', channelName: 'Basic notifications', channelDescription: 'Notification channel for basic tests', defaultColor: const Color(0xFF9D50DD), ledColor: Colors.white)],
+      'resource://drawable/ic_notification',
+      [
+        NotificationChannel(channelGroupKey: 'basic_channel_group', channelKey: 'basic_channel', channelName: 'Basic notifications', channelDescription: 'Notification channel for basic tests', defaultColor: const Color(0xFF9D50DD), ledColor: Colors.white, importance: NotificationImportance.High, locked: true, soundSource: 'resource://raw/tododude_notification'),
+      ],
       // Channel groups are only visual and are not required
       channelGroups: [NotificationChannelGroup(channelGroupKey: 'basic_channel_group', channelGroupName: 'Basic group')],
       debug: true);
@@ -29,6 +29,7 @@ void main() async {
       AwesomeNotifications().requestPermissionToSendNotifications();
     }
   });
+
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('StartUsingAppBox');
@@ -37,18 +38,36 @@ void main() async {
   await Hive.openBox('ToDoListBox');
   await Hive.openBox('HabitsBox');
   await Hive.openBox('InboxListBox');
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp, // Только вертикальная ориентация
-  ]).then((_) {
-    runApp(MultiProvider(providers: [ChangeNotifierProvider(create: (context) => AllNotes())], child: const MyApp()));
+  String? initialRoute = '/wishboard';
+
+  // Проверяем, была ли передана полезная нагрузка от уведомления
+  AwesomeNotifications().getInitialNotificationAction().then((action) {
+    if (action?.payload?['route'] != null) {
+      initialRoute = action!.payload!['route']; // Устанавливаем начальный маршрут
+    }
+    runApp(MyApp(initialRoute: initialRoute));
   });
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  final String? initialRoute;
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
+    AwesomeNotifications().setListeners(
+      onActionReceivedMethod: (event) async {
+        if (event.payload!['route'] == '/calendar') {
+          navigatorKey.currentState?.pushNamed('/calendar');
+        }
+      },
+      onNotificationDisplayedMethod: (event) async {
+        if (event.payload!['route'] == '/calendar') {
+          Navigator.pushNamed(context, '/calendar');
+        }
+      },
+    );
     final myBox = Hive.box('StartUsingAppBox');
     StartApp startApp = StartApp();
     if (myBox.get('STARTAPP') == null) {
@@ -56,20 +75,34 @@ class MyApp extends StatelessWidget {
     } else {
       startApp.loadData();
     }
-    return MaterialApp(
-      theme: mainTheme(),
-      debugShowCheckedModeBanner: false,
-      home: const WishBoardPage(),
-      routes: {
-        '/wishboard': (context) => const WishBoardPage(),
-        '/habbitsTracker': (context) => const HabitsTracker(),
-        '/calendar': (context) => const Calendar(),
-        '/inbox': (context) => const Inbox(),
-        '/notes': (context) => const Notes(),
-        '/statistics': (context) => DashboardPage(),
-        '/createNote': (context) => const CreateNotePage(),
-        '/habitDashboard': (context) => const HabitDashboard(),
-      },
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      if (constraints.maxWidth >= 600) {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+      } else {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+        ]);
+      }
+      return MaterialApp(
+        navigatorKey: navigatorKey,
+        theme: mainTheme(),
+        debugShowCheckedModeBanner: false,
+        home: initialRoute == '/wishboard' ? WishBoardPage() : Calendar(),
+        routes: {
+          '/wishboard': (context) => const WishBoardPage(),
+          '/habbitsTracker': (context) => const HabitsTracker(),
+          '/calendar': (context) => const Calendar(),
+          '/inbox': (context) => const Inbox(),
+          '/notes': (context) => const Notes(),
+          '/statistics': (context) => DashboardPage(),
+          '/createNote': (context) => const CreateNotePage(),
+          '/habitDashboard': (context) => const HabitDashboard(),
+        },
+      );
+    });
   }
 }

@@ -1,3 +1,6 @@
+
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
@@ -21,15 +24,36 @@ class HabitsDB extends ChangeNotifier {
     _myBox.put('HABITS', habbitsList);
   }
 
-  void addHabit(String title, List<String> daysOfWeek, start, end) {
+  void addHabit(String title, List<String> daysOfWeek, start, end, notificationTime, notificationId) async {
     Map<String, bool> progress = {};
     DateFormat dateFormat = DateFormat('dd MMM yyyy');
-    for (DateTime date = start; date.isBefore(end) || dateFormat.format(date) == dateFormat.format(end); date = date.add(const Duration(days: 1))) {
+    for (DateTime date = DateTime(start.year, start.month, start.day, notificationTime != null ? notificationTime.hour : 0, notificationTime != null ? notificationTime.minute : 0); date.isBefore(end) || dateFormat.format(date) == dateFormat.format(end); date = date.add(const Duration(days: 1))) {
       if (daysOfWeek.contains(DateFormat('EEE').format(date))) {
         progress[dateFormat.format(date)] = false;
+        if (notificationTime != null) {
+          AwesomeNotifications().setChannel(
+              NotificationChannel(
+                channelKey: title,
+                channelName: title,
+                channelDescription: notificationTime.toString(),
+                soundSource: 'resource://raw/tododude_notification',
+              ),
+              forceUpdate: true);
+          AwesomeNotifications().createNotification(content: NotificationContent(notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateFormat('ddMMyyyy').format(date)), channelKey: title, title: "ToDoDude", body: title, payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: date.year, month: date.month, day: date.day, hour: notificationTime.hour, minute: notificationTime.minute));
+        }
       }
     }
-    habbitsList.add({'id': const Uuid().v4(), 'title': title, 'daysOfWeek': daysOfWeek, 'progress': progress, 'start': start, 'finish': end});
+
+    habbitsList.add({
+      'id': const Uuid().v4(),
+      'title': title,
+      'daysOfWeek': daysOfWeek,
+      'progress': progress,
+      'start': start,
+      'finish': end,
+      'notificationId': notificationId,
+      'notificationTime': notificationTime,
+    });
     updateDataBase();
     notifyListeners();
   }
@@ -43,6 +67,7 @@ class HabitsDB extends ChangeNotifier {
   }
 
   void removeHabit(index) {
+    AwesomeNotifications().removeChannel(habbitsList[index]['title']);
     habbitsList.removeAt(index);
     updateDataBase();
     notifyListeners();
