@@ -49,6 +49,12 @@ void main() async {
   });
 }
 
+Future<void> onActionNotification(event) async {
+  if (event.payload!['route'] == '/calendar') {
+    MyApp.navigatorKey.currentState?.pushNamed('/calendar');
+  }
+}
+
 class MyApp extends StatelessWidget {
   static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   final String? initialRoute;
@@ -56,18 +62,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AwesomeNotifications().setListeners(
-      onActionReceivedMethod: (event) async {
-        if (event.payload!['route'] == '/calendar') {
-          navigatorKey.currentState?.pushNamed('/calendar');
-        }
-      },
-      onNotificationDisplayedMethod: (event) async {
-        if (event.payload!['route'] == '/calendar') {
-          Navigator.pushNamed(context, '/calendar');
-        }
-      },
-    );
+    AwesomeNotifications().setListeners(onActionReceivedMethod: onActionNotification, onNotificationDisplayedMethod: onActionNotification);
     final myBox = Hive.box('StartUsingAppBox');
     StartApp startApp = StartApp();
     if (myBox.get('STARTAPP') == null) {

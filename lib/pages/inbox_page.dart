@@ -302,7 +302,7 @@ class _InboxState extends State<Inbox> {
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
-                  'Add another task without date for to do!',
+                  'Add another task without deadline!',
                   style: TextStyle(
                     color: hintTxt,
                     fontSize: 20,
