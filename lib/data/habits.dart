@@ -26,20 +26,13 @@ class HabitsDB extends ChangeNotifier {
 
   void addHabit(String title, List<String> daysOfWeek, start, end, notificationTime, notificationId) async {
     Map<String, bool> progress = {};
+    String? channelKey = null;
     DateFormat dateFormat = DateFormat('dd MMM yyyy');
     for (DateTime date = DateTime(start.year, start.month, start.day, notificationTime != null ? notificationTime.hour : 0, notificationTime != null ? notificationTime.minute : 0); date.isBefore(end) || dateFormat.format(date) == dateFormat.format(end); date = date.add(const Duration(days: 1))) {
       if (daysOfWeek.contains(DateFormat('EEE').format(date))) {
         progress[dateFormat.format(date)] = false;
         if (notificationTime != null) {
-          AwesomeNotifications().setChannel(
-              NotificationChannel(
-                channelKey: title,
-                channelName: title,
-                channelDescription: notificationTime.toString(),
-                soundSource: 'resource://raw/tododude_notification',
-              ),
-              forceUpdate: true);
-          AwesomeNotifications().createNotification(content: NotificationContent(notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateFormat('ddMMyyyy').format(date)), channelKey: title, title: "ToDoDude", body: title, payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: date.year, month: date.month, day: date.day, hour: notificationTime.hour, minute: notificationTime.minute));
+          AwesomeNotifications().createNotification(content: NotificationContent(locked: true, notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateTime.now().microsecond.toString()), channelKey: 'basic_channel', groupKey: title, title: "ToDoDude", body: title, payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: date.year, month: date.month, day: date.day, hour: notificationTime.hour, minute: notificationTime.minute));
         }
       }
     }
@@ -51,7 +44,7 @@ class HabitsDB extends ChangeNotifier {
       'progress': progress,
       'start': start,
       'finish': end,
-      'notificationId': notificationId,
+      'notificationId': channelKey,
       'notificationTime': notificationTime,
     });
     updateDataBase();
@@ -66,8 +59,8 @@ class HabitsDB extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeHabit(index) {
-    AwesomeNotifications().removeChannel(habbitsList[index]['title']);
+  void removeHabit(index) async {
+    AwesomeNotifications().cancelNotificationsByGroupKey(habbitsList[index]['title']);
     habbitsList.removeAt(index);
     updateDataBase();
     notifyListeners();

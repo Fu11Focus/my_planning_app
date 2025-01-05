@@ -33,15 +33,15 @@ ThemeData mainTheme() => ThemeData(
     checkboxTheme: CheckboxThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5.0),
-        side: WidgetStateBorderSide.resolveWith(
+        side: MaterialStateBorderSide.resolveWith(
           (states) => const BorderSide(
             width: 1.0,
             color: brand,
           ),
         ),
       ),
-      fillColor: WidgetStateProperty.all(bg),
-      checkColor: WidgetStateProperty.all(brand),
+      fillColor: MaterialStateProperty.all(bg),
+      checkColor: MaterialStateProperty.all(brand),
     ),
     textSelectionTheme: const TextSelectionThemeData(selectionColor: brand, cursorColor: brand),
     textTheme: const TextTheme(

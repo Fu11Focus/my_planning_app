@@ -38,7 +38,7 @@ class TodoList extends ChangeNotifier {
   void addTodoItem(String title, bool done, DateTime date, DateTime? notification, int? notificationId) {
     todoList.add({'id': const Uuid().v4(), 'title': title, 'done': done, 'date': date, 'notification': notification, 'notificationId': notificationId});
     if (notificationId != null) {
-      AwesomeNotifications().createNotification(content: NotificationContent(locked: true, notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: notificationId, channelKey: "basic_channel", title: "ToDoDude", body: title, payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: notification!.year, month: notification.month, day: notification.day, hour: notification.hour, minute: notification.minute));
+      AwesomeNotifications().createNotification(content: NotificationContent( wakeUpScreen: true, id: notificationId, channelKey: "basic_channel", title: "ToDoDude", body: title, payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: notification!.year, month: notification.month, day: notification.day, hour: notification.hour, minute: notification.minute));
     }
     updateDataBase();
     notifyListeners();

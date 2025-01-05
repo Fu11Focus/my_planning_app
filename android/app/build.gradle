@@ -33,7 +33,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
     sourceSets {
@@ -62,8 +62,4 @@ android {
 
 flutter {
     source '../..'
-}
-
-dependencies {
-    //  classpath 'com.android.tools.build:gradle:8.1.1'
 }

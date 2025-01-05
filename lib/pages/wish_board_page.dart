@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:ToDoDude/widgets/neo_container.dart';
-import 'package:flutter/material.dart' hide CarouselController;
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';

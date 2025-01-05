@@ -1,6 +1,7 @@
 
 
 allprojects {
+    ext.kotlin_version = '1.9.0'
     repositories {
         google()
         mavenCentral()
@@ -17,4 +18,7 @@ subprojects {
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
+}
+dependencies {
+    // classpath 'com.android.tools.build:gradle:8.12.0'
 }

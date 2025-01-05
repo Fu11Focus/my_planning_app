@@ -1,7 +1,5 @@
 // ignore_for_file: deprecated_member_use
 
-import 'dart:math';
-
 import 'package:ToDoDude/services/notification_service.dart';
 import 'package:ToDoDude/widgets/bottom_nav_bar.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -291,7 +289,7 @@ class _CalendarState extends State<Calendar> {
   }
 
   void _addTodo() {
-    int notificationId = Random().nextInt(10000000);
+    int notificationId = int.parse(DateTime.now().microsecond.toString());
     DateTime notificationTimeForTask = DateTime(dateForNewTask.year, dateForNewTask.month, dateForNewTask.day, notificationTime.hour, notificationTime.minute);
     if (newTaskController.text.isNotEmpty) {
       setState(() {
@@ -483,7 +481,7 @@ class _CalendarState extends State<Calendar> {
     if (checked != null && checked) {
       AwesomeNotifications().cancel(int.parse(DateFormat('ddMMyyyy').format(selectDate)));
     } else if (checked != null && !checked) {
-      AwesomeNotifications().createNotification(content: NotificationContent(notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateFormat('ddMMyyyy').format(selectDate)), channelKey: habitsDB.habbitsList[index]['title'], title: "ToDoDude", body: habitsDB.habbitsList[index]['title'], payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: selectDate.year, month: selectDate.month, day: selectDate.day, hour: notificationTime.hour, minute: notificationTime.minute));
+      AwesomeNotifications().createNotification(content: NotificationContent(notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateFormat('ddMMyyyy').format(selectDate)), channelKey: 'basic_channel', title: "ToDoDude", body: habitsDB.habbitsList[index]['title'], payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: selectDate.year, month: selectDate.month, day: selectDate.day, hour: notificationTime.hour, minute: notificationTime.minute));
     }
     setState(() {
       habitsDB.toDayIsDone(id, checked, selectDate);
