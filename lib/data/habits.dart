@@ -1,5 +1,3 @@
-
-
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -32,7 +30,7 @@ class HabitsDB extends ChangeNotifier {
       if (daysOfWeek.contains(DateFormat('EEE').format(date))) {
         progress[dateFormat.format(date)] = false;
         if (notificationTime != null) {
-          AwesomeNotifications().createNotification(content: NotificationContent(locked: true, notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateTime.now().microsecond.toString()), channelKey: 'basic_channel', groupKey: title, title: "ToDoDude", body: title, payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: date.year, month: date.month, day: date.day, hour: notificationTime.hour, minute: notificationTime.minute));
+          AwesomeNotifications().createNotification(content: NotificationContent(locked: true, notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateTime.now().microsecond.toString()), channelKey: 'basic_channel', groupKey: title, title: "ToDoDude", body: title, payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: date.year, month: date.month, day: date.day, hour: notificationTime.hour, minute: notificationTime.minute, allowWhileIdle: true, preciseAlarm: true));
         }
       }
     }

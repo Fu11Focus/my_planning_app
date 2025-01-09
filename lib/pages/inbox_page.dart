@@ -263,7 +263,7 @@ class _InboxState extends State<Inbox> {
                 action: () {
                   setState(() {
                     _addTodo();
-                    inboxDB.inboxList.removeAt(inboxDB.inboxList.indexWhere((element) => element['id'] == id));
+                    inboxDB.removeFromInbox(id);
                     newTaskController.clear();
                   });
                 },

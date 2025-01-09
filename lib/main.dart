@@ -1,3 +1,4 @@
+import 'package:ToDoDude/util/notifications_controller.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:ToDoDude/data/start_using_app.dart';
@@ -15,10 +16,9 @@ import 'pages/wish_board_page.dart';
 import 'package:flutter/services.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await AwesomeNotifications().initialize(
-      // set the icon to null if you want to use the default app icon
-      // 'resource://drawable/ic_notification',
-      null,
+      'resource://drawable/ic_notification',
       [
         NotificationChannel(
           channelKey: 'basic_channel',
@@ -26,18 +26,19 @@ void main() async {
           channelDescription: 'Notification channel for basic tests',
           defaultColor: const Color(0xFF9D50DD),
           ledColor: Colors.white,
-          importance: NotificationImportance.High,
+          importance: NotificationImportance.Max,
+          defaultPrivacy: NotificationPrivacy.Public,
           locked: true, /*soundSource: 'resource://raw/tododude_notification'*/
         ),
       ],
       debug: true);
+  await NotificationController.initializeIsolateReceivePort();
   await AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
     if (!isAllowed) {
       AwesomeNotifications().requestPermissionToSendNotifications();
     }
   });
 
-  WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   await Hive.openBox('StartUsingAppBox');
   await Hive.openBox('MyBox');
@@ -57,8 +58,10 @@ void main() async {
 }
 
 Future<void> onActionNotification(event) async {
-  if (event.payload!['route'] == '/calendar') {
-    MyApp.navigatorKey.currentState?.pushNamed('/calendar');
+  if (event.payload?['route'] != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      MyApp.navigatorKey.currentState?.pushNamed(event.payload!['route']!);
+    });
   }
 }
 
