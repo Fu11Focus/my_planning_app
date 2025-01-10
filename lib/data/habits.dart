@@ -26,11 +26,13 @@ class HabitsDB extends ChangeNotifier {
     Map<String, bool> progress = {};
     String? channelKey = null;
     DateFormat dateFormat = DateFormat('dd MMM yyyy');
+    int? notificationId = null;
     for (DateTime date = DateTime(start.year, start.month, start.day, notificationTime != null ? notificationTime.hour : 0, notificationTime != null ? notificationTime.minute : 0); date.isBefore(end) || dateFormat.format(date) == dateFormat.format(end); date = date.add(const Duration(days: 1))) {
       if (daysOfWeek.contains(DateFormat('EEE').format(date))) {
         progress[dateFormat.format(date)] = false;
         if (notificationTime != null) {
-          AwesomeNotifications().createNotification(content: NotificationContent(locked: true, notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateTime.now().microsecond.toString()), channelKey: 'basic_channel', groupKey: title, title: "ToDoDude", body: title, payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: date.year, month: date.month, day: date.day, hour: notificationTime.hour, minute: notificationTime.minute, allowWhileIdle: true, preciseAlarm: true));
+          notificationId = int.parse(DateTime.now().microsecond.toString());
+          AwesomeNotifications().createNotification(content: NotificationContent(locked: true, notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: notificationId, channelKey: 'basic_channel', groupKey: title, title: "ToDoDude", body: title, payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: date.year, month: date.month, day: date.day, hour: notificationTime.hour, minute: notificationTime.minute, allowWhileIdle: true, preciseAlarm: true));
         }
       }
     }
@@ -42,7 +44,7 @@ class HabitsDB extends ChangeNotifier {
       'progress': progress,
       'start': start,
       'finish': end,
-      'notificationId': channelKey,
+      'notificationId': notificationId,
       'notificationTime': notificationTime,
     });
     updateDataBase();

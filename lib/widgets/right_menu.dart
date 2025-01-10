@@ -10,6 +10,7 @@ class RightMenu extends StatelessWidget {
     ListTile buildListTile(IconData icon, String title, String goTo) {
       return ListTile(
         onTap: () {
+          Navigator.pop(context);
           Navigator.pushNamed(context, goTo);
         },
         leading: Icon(

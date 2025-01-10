@@ -479,7 +479,7 @@ class _CalendarState extends State<Calendar> {
   void _toggleHabitStatus(String id, bool? checked) {
     int index = habitsDB.habbitsList.indexWhere((e) => e['id'] == id);
     if (checked != null && checked) {
-      AwesomeNotifications().cancel(int.parse(DateFormat('ddMMyyyy').format(selectDate)));
+      // AwesomeNotifications().cancel(int.parse(DateFormat('ddMMyyyy').format(selectDate)));
     } else if (checked != null && !checked) {
       AwesomeNotifications().createNotification(content: NotificationContent(notificationLayout: NotificationLayout.BigText, wakeUpScreen: true, id: int.parse(DateFormat('ddMMyyyy').format(selectDate)), channelKey: 'basic_channel', title: "ToDoDude", body: habitsDB.habbitsList[index]['title'], payload: {'route': '/calendar'}), schedule: NotificationCalendar(year: selectDate.year, month: selectDate.month, day: selectDate.day, hour: notificationTime.hour, minute: notificationTime.minute));
     }
@@ -497,22 +497,30 @@ class _CalendarState extends State<Calendar> {
         allTaskForToday = _getAllTaskForToday();
       });
     });
-    return Scaffold(
-        endDrawer: const RightMenu(thisPage: 'Calendar'),
-        drawerScrimColor: Colors.transparent,
-        appBar: const MyAppBar(icon: Icons.calendar_month_outlined, text: 'Calendar'),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20.0),
-              child: MyAdvencedCalendar(controller: controller),
-            ),
-            Expanded(
-              child: ListView.builder(itemCount: allTaskForToday.length, itemBuilder: (context, index) => allTaskForToday[index]),
-            )
-          ],
-        ),
-        bottomNavigationBar: BottomNavBar(action: _addTodoDialog));
+    return PopScope(
+      onPopInvoked: (didPop) async {
+        // Возвращаем true, чтобы система обрабатывала кнопку "Назад" стандартно
+        if (Scaffold.of(context).isDrawerOpen) {
+          Navigator.of(context).pop(); // Закрываем Drawer, если он открыт // Останавливаем стандартную обработку "Назад"
+        }
+      },
+      child: Scaffold(
+          endDrawer: const RightMenu(thisPage: 'Calendar'),
+          drawerScrimColor: Colors.transparent,
+          appBar: const MyAppBar(icon: Icons.calendar_month_outlined, text: 'Calendar'),
+          body: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: MyAdvencedCalendar(controller: controller),
+              ),
+              Expanded(
+                child: ListView.builder(itemCount: allTaskForToday.length, itemBuilder: (context, index) => allTaskForToday[index]),
+              )
+            ],
+          ),
+          bottomNavigationBar: BottomNavBar(action: _addTodoDialog)),
+    );
   }
 
   void setNotificationTimeDialog(setState) async {
