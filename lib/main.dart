@@ -11,12 +11,16 @@ import 'package:ToDoDude/pages/notes_page.dart';
 
 import 'package:ToDoDude/pages/dashboard_page.dart';
 import 'package:ToDoDude/util/main_theme.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'pages/wish_board_page.dart';
 import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+  RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ['9ab9c18b-81f9-4a5f-9d13-f09806c27c33']);
+  MobileAds.instance.updateRequestConfiguration(requestConfiguration);
   await AwesomeNotifications().initialize(
       'resource://drawable/ic_notification',
       [

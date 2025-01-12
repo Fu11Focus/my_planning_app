@@ -1,6 +1,6 @@
 {
   "notebook.breadcrumbs.showCodeCells": false,
-  "breadcrumbs.enabled": false,
+  // "breadcrumbs.enabled": false,
   "breadcrumbs.filePath": "off",
   "editor.cursorWidth": 1,
   "editor.fontSize": 14,

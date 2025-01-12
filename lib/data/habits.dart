@@ -24,7 +24,6 @@ class HabitsDB extends ChangeNotifier {
 
   void addHabit(String title, List<String> daysOfWeek, start, end, notificationTime, notificationId) async {
     Map<String, bool> progress = {};
-    String? channelKey = null;
     DateFormat dateFormat = DateFormat('dd MMM yyyy');
     int? notificationId = null;
     for (DateTime date = DateTime(start.year, start.month, start.day, notificationTime != null ? notificationTime.hour : 0, notificationTime != null ? notificationTime.minute : 0); date.isBefore(end) || dateFormat.format(date) == dateFormat.format(end); date = date.add(const Duration(days: 1))) {
