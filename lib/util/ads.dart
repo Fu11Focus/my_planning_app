@@ -1,48 +1,64 @@
+import 'dart:io';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class AdsService {
   static final AdsService _instance = AdsService._internal();
   factory AdsService() => _instance;
   AdsService._internal();
 
+  late final Box _box = Hive.box('dateOfLastShowingAds');
   InterstitialAd? _interstitialAd;
-  bool _isAdReady = false;
+  bool isInterstitialAdReady = false;
 
-  void loadInterstitialAd() async {
-    await InterstitialAd.load(
-      adUnitId: 'ca-app-pub-4376742320742204/3986387639', //мой айди
-      // adUnitId: 'ca-app-pub-3940256099942544/1033173712', // Тестовый Ad Unit ID
-      request: AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (InterstitialAd ad) {
-          _interstitialAd = ad;
-          _isAdReady = true;
-          _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-            onAdDismissedFullScreenContent: (InterstitialAd ad) {
-              ad.dispose();
-              loadInterstitialAd();
-            },
-            onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-              ad.dispose();
-              loadInterstitialAd();
-            },
-          );
-        },
-        onAdFailedToLoad: (LoadAdError error) {
-          print('Failed to load an interstitial ad: ${error.message}');
-          _isAdReady = false;
-        },
-      ),
-    );
+  // Инициализация Hive и загрузка данных
+  Future<void> init() async {
+    var date = _box.get('dateOfLastShowingAds');
+    if (date == null) {
+      _box.put('dateOfLastShowingAds', DateTime.now());
+    }
   }
 
-  void showInterstitialAd() async {
-    if (_isAdReady && _interstitialAd != null) {
-      await _interstitialAd!.show();
-      _isAdReady = false;
-      _interstitialAd = null;
+  void saveLastShowingDate() {
+    _box.put('dateOfLastShowingAds', DateTime.now());
+  }
+
+  void interstitialAdLoading() {
+    InterstitialAd.load(
+        adUnitId: Platform.isAndroid ? 'ca-app-pub-4376742320742204/2181247729' : 'ca-app-pub-4376742320742204/7803742513',
+        request: AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
+          _interstitialAd = ad;
+          isInterstitialAdReady = true;
+          print("Реклама загружена");
+        }, onAdFailedToLoad: (error) {
+          isInterstitialAdReady = false;
+          print('Ошибка загрузки: ${error}');
+        }));
+  }
+
+  void interstitialDispose() {
+    _interstitialAd?.dispose();
+    isInterstitialAdReady = false;
+  }
+
+  void showInterstitialAd() {
+    DateTime date = _box.get('dateOfLastShowingAds');
+    if (isInterstitialAdReady && DateTime.now().difference(date).inMinutes > 10) {
+      _interstitialAd!.show();
+      saveLastShowingDate();
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
+        ad.dispose();
+        isInterstitialAdReady = false;
+        _interstitialAd = null;
+        interstitialAdLoading();
+      }, onAdFailedToShowFullScreenContent: (ad, error) {
+        ad.dispose();
+        isInterstitialAdReady = false;
+      });
     } else {
-      print('Interstitial ad is not ready.');
+      print("Реклама недоступна или прошло меньше 10 минут с момента последнего показа.");
+      interstitialAdLoading();
     }
   }
 }

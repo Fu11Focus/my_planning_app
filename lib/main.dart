@@ -1,3 +1,4 @@
+import 'package:ToDoDude/util/ads.dart';
 import 'package:ToDoDude/util/notifications_controller.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ import 'package:flutter/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
-  RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ['9ab9c18b-81f9-4a5f-9d13-f09806c27c33']);
+  RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ['9ab9c18b-81f9-4a5f-9d13-f09806c27c33', '20099073fc731b4dd5e10e94228cbb85']);
   MobileAds.instance.updateRequestConfiguration(requestConfiguration);
   await AwesomeNotifications().initialize(
       'resource://drawable/ic_notification',
@@ -44,12 +45,18 @@ void main() async {
   });
 
   await Hive.initFlutter();
+  await Hive.openBox('dateOfLastShowingAds');
   await Hive.openBox('StartUsingAppBox');
   await Hive.openBox('MyBox');
   await Hive.openBox('WishBox');
   await Hive.openBox('ToDoListBox');
   await Hive.openBox('HabitsBox');
   await Hive.openBox('InboxListBox');
+
+  AdsService adsService = AdsService();
+  adsService.init();
+  adsService.interstitialAdLoading();
+
   String? initialRoute = '/wishboard';
 
   // Проверяем, была ли передана полезная нагрузка от уведомления

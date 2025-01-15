@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ToDoDude/util/color_palette.dart';
 
 ThemeData mainTheme() => ThemeData(
-    fontFamily: 'Campton',
+    // fontFamily: 'Campton',
     drawerTheme: const DrawerThemeData(
       scrimColor: Colors.transparent,
     ),

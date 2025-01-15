@@ -1,6 +1,6 @@
+import 'package:ToDoDude/util/ads.dart';
 import 'package:flutter/material.dart';
 import 'package:ToDoDude/util/color_palette.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class RightMenu extends StatefulWidget {
   final String thisPage;
@@ -10,72 +10,32 @@ class RightMenu extends StatefulWidget {
 }
 
 class _RightMenuState extends State<RightMenu> {
-  late InterstitialAd _interstitialAd;
-  bool isInterstitialAdReady = false;
+  AdsService adsService = AdsService();
 
   @override
   void initState() {
     super.initState();
-    InterstitialAd.load(
-        adUnitId: 'ca-app-pub-4376742320742204/2181247729',
-        request: AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(onAdLoaded: (ad) {
-          setState(() {
-            _interstitialAd = ad;
-            isInterstitialAdReady = true;
-          });
-        }, onAdFailedToLoad: (error) {
-          isInterstitialAdReady = false;
-        }));
+    adsService.interstitialAdLoading();
   }
 
   @override
   void dispose() {
+    adsService.interstitialDispose();
     super.dispose();
-    _interstitialAd.dispose();
-  }
-
-  void _showInterstitialAd() {
-    if (isInterstitialAdReady) {
-      _interstitialAd.show();
-      _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
-        ad.dispose();
-        setState(() {
-          isInterstitialAdReady = false;
-        });
-        InterstitialAd.load(
-          adUnitId: 'ca-app-pub-4376742320742204/2181247729',
-          request: AdRequest(),
-          adLoadCallback: InterstitialAdLoadCallback(
-            onAdLoaded: (ad) {
-              setState(() {
-                _interstitialAd = ad;
-                isInterstitialAdReady = true;
-              });
-            },
-            onAdFailedToLoad: (error) {
-              isInterstitialAdReady = false;
-            },
-          ),
-        );
-      }, onAdFailedToShowFullScreenContent: (ad, error) {
-        ad.dispose();
-        setState(() {
-          isInterstitialAdReady = false;
-        });
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     ListTile buildListTile(IconData icon, String title, String goTo) {
       return ListTile(
-        onTap: () {
+        onTap: () async {
           if (widget.thisPage != title) {
-            _showInterstitialAd();
-            Navigator.pop(context);
-            Navigator.pushNamed(context, goTo); // Перейти на новую страницу
+            try {
+              adsService.showInterstitialAd();
+            } catch (error) {
+              print(error);
+            }
+            Navigator.restorablePopAndPushNamed(context, goTo); // Перейти на новую страницу
           }
         },
         leading: Icon(
@@ -120,7 +80,6 @@ class _RightMenuState extends State<RightMenu> {
           buildListTile(Icons.inbox, 'Inbox', '/inbox'),
           buildListTile(Icons.create_rounded, 'Notes', '/notes'),
           buildListTile(Icons.add_chart_outlined, 'Dashboard', '/statistics'),
-          TextButton(onPressed: _showInterstitialAd, child: Text('show ads')),
           const Center(
             child: Text(
               'v1.0.0',
