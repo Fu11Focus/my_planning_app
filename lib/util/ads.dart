@@ -42,15 +42,18 @@ class AdsService {
     isInterstitialAdReady = false;
   }
 
-  void showInterstitialAd() {
+  void showInterstitialAd() async {
     DateTime date = _box.get('dateOfLastShowingAds');
     if (isInterstitialAdReady && DateTime.now().difference(date).inMinutes > 10) {
-      _interstitialAd!.show();
       saveLastShowingDate();
+      try {
+        await _interstitialAd!.show();
+      } catch (error) {
+        print(error);
+      }
       _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(onAdDismissedFullScreenContent: (ad) {
         ad.dispose();
         isInterstitialAdReady = false;
-        _interstitialAd = null;
         interstitialAdLoading();
       }, onAdFailedToShowFullScreenContent: (ad, error) {
         ad.dispose();
@@ -58,7 +61,6 @@ class AdsService {
       });
     } else {
       print("Реклама недоступна или прошло меньше 10 минут с момента последнего показа.");
-      interstitialAdLoading();
     }
   }
 }

@@ -20,8 +20,8 @@ import 'package:flutter/services.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
-  RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ['9ab9c18b-81f9-4a5f-9d13-f09806c27c33', '20099073fc731b4dd5e10e94228cbb85']);
-  MobileAds.instance.updateRequestConfiguration(requestConfiguration);
+  // RequestConfiguration requestConfiguration = RequestConfiguration(testDeviceIds: ['9ab9c18b-81f9-4a5f-9d13-f09806c27c33', '20099073fc731b4dd5e10e94228cbb85', "CBBD0C624CE83B9A3536C6F6EBD45F8E"]);
+  // MobileAds.instance.updateRequestConfiguration(requestConfiguration);
   await AwesomeNotifications().initialize(
       'resource://drawable/ic_notification',
       [
